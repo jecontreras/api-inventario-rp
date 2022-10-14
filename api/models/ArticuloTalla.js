@@ -20,6 +20,9 @@ module.exports = {
     },
     cantidad:{
       type: 'string'
+    },
+    listColor:{
+      model: 'articuloColor'
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
