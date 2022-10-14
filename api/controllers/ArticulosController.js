@@ -5,8 +5,18 @@
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
 
-module.exports = {
-  
+ let Procedures = Object();
+ Procedures.querys = async (req, res)=>{
+     let params = req.allParams();
+     let resultado = Object();
+     resultado = await QuerysServices(Articulos, params);
+     return res.ok(resultado);
+ }
 
-};
-
+ Procedures.create = async( req, res )=>{
+    let params = req.allParams();
+    let resultado = Object();
+    return res.ok(resultado);
+ }
+ 
+ module.exports = Procedures;

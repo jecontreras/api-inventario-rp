@@ -33,8 +33,9 @@ module.exports = {
     qr:{
       type:'string'
     },
-    
-    
+    categoria:{
+      model: 'categoria'
+    },
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
