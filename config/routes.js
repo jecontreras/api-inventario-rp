@@ -21,6 +21,7 @@ module.exports.routes = {
 
   //'/': { view: 'pages/homepage' },
   'POST /articulos/create': 'ArticulosController.create',
+  'POST /articulos/update': 'ArticulosController.update',
   'POST /articulos/querys': 'ArticulosController.querys',
 
   /***************************************************************************

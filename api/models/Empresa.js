@@ -23,6 +23,9 @@ module.exports = {
     },
     nombreAcargo:{
       type: 'string'
+    },
+    telefono:{
+      type: 'string'
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗

@@ -42,11 +42,33 @@
  Procedures.update = async( req, res )=>{
    let resultado = Object();
    let params = req.allParams();
-   if( params.articulo.id ) return res.status(400).send( { data:"Error id undefines" } );
+   
+   if( !params.articulo.id ) return res.status(400).send( { data:"Error id undefines" } );
+   //console.log("****+", params.articulo)
    resultado = await Articulos.update( { id: params.articulo.id }, params.articulo );
+   let result = Object();
    for( let row of params.listDetalle ){
-      
+      //console.log("****51", row)
+      if( row.id ) await Procedures.updateArticuloColor( { id: row.id, color: row.color } );
+      else {
+         row.articulo = params.id;
+         result = await Procedures.createArticuloColor( { color: row.color, articulo: row.articulo } );
+         row.id = result.id;
+      }
+      for( let item of row.listTalla ){
+         if( item.id ) await Procedures.updateArticuloTalla( { id: item.id, talla: item.talla, cantidad: item.cantidad } );
+         else {
+            item.articulo = params.id;
+            item.listColor = result.id || row.id;
+            //console.log("****54", item)
+            let finix = await Procedures.createArticuloTalla( { talla: item.talla, cantidad: item.cantidad, articulo: item.articulo, listColor: item.listColor} );
+            item.id = finix.id;
+            
+         }
+      }
    }
+
+   return res.status(200).send( { status:200, data: params } );
 
  }
 
@@ -62,6 +84,14 @@
 
  Procedures.createArticuloTalla = async( data )=>{
     return await ArticuloTalla.create( data ).fetch();
+ }
+
+ Procedures.updateArticuloColor = async( data )=>{
+   return await ArticuloColor.update( { id: data.id }, data );
+ }
+
+ Procedures.updateArticuloTalla = async( data )=>{
+   return await ArticuloTalla.update( { id: data.id }, data );
  }
  
  module.exports = Procedures;
