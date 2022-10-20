@@ -21,6 +21,9 @@ module.exports = {
     articuloTalla:{
       model: 'articuloTalla'
     },
+    articuloColor:{
+      model: 'articuloColor'
+    },
     inventarioEntrada:{
       model: 'inventarioEntrada'
     },
