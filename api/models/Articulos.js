@@ -13,7 +13,8 @@ module.exports = {
     //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
     codigo:{
-      type: 'string'
+      type: 'string',
+      unique: true
     },
     titulo:{
       type: 'string'
@@ -36,6 +37,9 @@ module.exports = {
     categoria:{
       model: 'categoria'
     },
+    subcategoria:{
+      model: 'categoria'
+    },
     precioClienteDrop:{
       type: 'integer'
     },
@@ -44,6 +48,10 @@ module.exports = {
     },
     precioOtras:{
       type: 'integer'
+    },
+    estado:{
+      type: 'integer',
+      defaultsTo: 0 // 0 activo 1 eliminado
     }
 
 
