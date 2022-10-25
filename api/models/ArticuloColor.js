@@ -17,6 +17,10 @@ module.exports = {
     },
     articulo:{
       model: 'articulos'
+    },
+    estado:{
+      type: 'integer',
+      defaultsTo: 0 // 0 activo 1 eliminado
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗

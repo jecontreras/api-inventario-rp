@@ -14,6 +14,10 @@ module.exports = {
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
     txt:{
       type: 'string'
+    },
+    estado:{
+      type: 'integer',
+      defaultsTo: 0 // 0 activo 1 eliminado
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗

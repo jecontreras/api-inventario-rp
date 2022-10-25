@@ -20,6 +20,10 @@ module.exports = {
     },
     prf_fec_actualiz:{
         type: 'string'
+    },
+    estado:{
+      type: 'integer',
+      defaultsTo: 0 // 0 activo 1 eliminado
     }
   },
 

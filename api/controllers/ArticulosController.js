@@ -12,9 +12,9 @@
      let resultado = Object();
      resultado = await QuerysServices(Articulos, params);
      for( let row of resultado.data ){
-      row.listColor = await ArticuloColor.find( { where: { articulo: row.id } } ).limit(100);
+      row.listColor = await ArticuloColor.find( { where: { articulo: row.id, estado: 0 } } ).limit(100);
       for( let key of row.listColor ){
-         key.listTalla = await ArticuloTalla.find( { where: { articulo: row.id, listColor: key.id } } ).limit(100);
+         key.listTalla = await ArticuloTalla.find( { where: { articulo: row.id, listColor: key.id, estado:0 } } ).limit(100);
       }
      }
      return res.ok(resultado);
@@ -45,18 +45,20 @@
    
    if( !params.articulo.id ) return res.status(400).send( { data:"Error id undefines" } );
    //console.log("****+", params.articulo)
-   resultado = await Articulos.update( { id: params.articulo.id }, params.articulo );
+   resultado = await Articulos.update( { id: params.articulo.id }, params.articulo )
    let result = Object();
    for( let row of params.listDetalle ){
       //console.log("****51", row)
-      if( row.id ) await Procedures.updateArticuloColor( { id: row.id, color: row.color } );
+      if( row.id ) await Procedures.updateArticuloColor( { id: row.id, color: row.color, estado: row.estado, articulo: row.articulo } );
       else {
          row.articulo = params.id;
          result = await Procedures.createArticuloColor( { color: row.color, articulo: row.articulo } );
          row.id = result.id;
       }
+      if( row.estado == 1 ) await Procedures.reloadArticuloTalla( { articulo: row.articulo, listColor: row.id } );
       for( let item of row.listTalla ){
-         if( item.id ) await Procedures.updateArticuloTalla( { id: item.id, talla: item.talla, cantidad: item.cantidad } );
+         if( row.estado == 1 ) item.estado = 1;
+         if( item.id ) await Procedures.updateArticuloTalla( { id: item.id, talla: item.talla, cantidad: item.cantidad, estado: item.estado } );
          else {
             item.articulo = params.id;
             item.listColor = result.id || row.id;
@@ -90,7 +92,18 @@
    return await ArticuloColor.update( { id: data.id }, data );
  }
 
+ Procedures.reloadArticuloTalla = async( data )=>{
+
+   let resultado = await ArticuloTalla.find( { where: { articulo: data.articulo, listColor: data.listColor } } );
+   //console.log("************", resultado, data );
+   for ( let row of resultado ){
+      row.estado = 1;
+      await Procedures.updateArticuloTalla( row );
+   }
+ }
+
  Procedures.updateArticuloTalla = async( data )=>{
+   console.log("***RL", data )
    return await ArticuloTalla.update( { id: data.id }, data );
  }
  
