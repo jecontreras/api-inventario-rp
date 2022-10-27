@@ -24,12 +24,6 @@ module.exports = {
     articuloColor:{
       model: 'articuloColor'
     },
-    inventarioEntrada:{
-      model: 'inventarioEntrada'
-    },
-    inventarioSalida:{
-      model: 'inventarioSalida'
-    },
     logs:{
       model: 'logs'
     },

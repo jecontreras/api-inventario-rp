@@ -10,6 +10,21 @@
      let params = req.allParams();
      let resultado = Object();
      resultado = await QuerysServices(Factura, params);
+     for(let row of resultado.data ){
+        if( row.provedor ) row.provedor = await Provedor.findOne( { where: { id: row.provedor } } );
+        row.listFacturaArticulo = await FacturaArticulo.find( { where: { factura: row.id } });
+        for( let item of  row.listFacturaArticulo ){
+            item.articulo = await Articulos.findOne( { id: item.articulo } );
+            if( item.articulo ) {
+                item.articulo.listColor = await ArticuloColor.find( { where: { articulo: item.articulo.id } } ).limit(100);
+                for( let key of item.articulo.listColor ){
+                    key.listTalla = await ArticuloTalla.find( { where: { articulo: item.articulo.id, listColor: key.id} } ).limit(100);
+                }
+            }
+            item.articuloTalla = await ArticuloTalla.findOne( { id: item.articuloTalla } );
+            item.articuloColor = await ArticuloColor.findOne( { id: item.articuloColor } );
+        }
+     }
      return res.ok(resultado);
  }
  Procedures.create = async( req, res )=>{
@@ -34,8 +49,6 @@
         articulo: data.articulo,
         articuloTalla: data.articuloTalla,
         articuloColor: data.articuloColor,
-        inventarioEntrada: data.inventarioEntrada,
-        inventarioSalida: data.inventarioSalida,
         cantidad: data.cantidad
     };
     return await FacturaArticulo.create( querys ).fetch();
