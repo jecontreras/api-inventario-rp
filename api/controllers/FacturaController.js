@@ -29,12 +29,15 @@
  }
  Procedures.create = async( req, res )=>{
     let params = req.allParams();
+    let clone = req.allParams();
     let resultado = Object();
     resultado = await Procedures.createFactura( params.factura );
     let result = Object();
     for( let row of params.listArticulo ){
         row.factura = resultado.id;
         result = await Procedures.createArticuloFactura( row );
+        //console.log("***", clone, result)
+        await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: clone.factura.entrada, user: clone.factura.user, articuloTalla: result.articuloTalla } );
     }
     return res.status(200).send( { status:200, data: params } );
  }
@@ -52,5 +55,18 @@
         cantidad: data.cantidad
     };
     return await FacturaArticulo.create( querys ).fetch();
+ }
+
+ Procedures.CantidadesDs = async( data )=>{
+    let datas = {
+        valor: data.valor,
+        tipoEntrada: data.tipoEntrada,
+        articuloTalla: data.articuloTalla,
+        user: data.user
+      };
+      console.log("****", data )
+      if (!datas.user || !datas.valor) return "Erro en los parametros";
+      await PuntosService.validandoEntrada(datas);
+      return "ok";
  }
  module.exports = Procedures;

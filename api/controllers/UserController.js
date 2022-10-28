@@ -14,16 +14,16 @@
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
  Procedures.creacionTokens = async( data )=>{
-   let tokenData = {
-     username: data.usu_email,
-     id: data.id
-   };
-   return new Promise( async( resolve ) => {
-     let token = jwt.sign( tokenData, 'Secret Password', { expiresIn: 60 * 60 * 24 /*expires in 24 hours */ });
-     await Cache.guardar( { user: data.id, rol: data.usu_perfil, tokens: token } );
-     return resolve( token );
-   })
- }
+  let tokenData = {
+    username: data.usu_email,
+    id: data.id
+  };
+  return new Promise( async( resolve ) => {
+    let token = jwt.sign( tokenData, 'Secret Password', { expiresIn: 60 * 60 * 24 /*expires in 24 hours */ });
+    await Cache.guardar( { user: data.id, rol: data.usu_perfil, tokens: token } );
+    return resolve( token );
+  })
+}
  
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.register = async(req, res)=>{
@@ -39,9 +39,9 @@
    if(!password) return res.serverError("password Error");
    params.usu_clave = password;
      //   Rol
-   let rol = await Perfil.findOne({prf_descripcion: params.rol || "vendedor"});
+   let rol = await Perfil.findOne({prf_descripcion: params.rol || "user"});
    if(!rol) {
-     rol = await Perfil.create({prf_descripcion: params.rol || "vendedor"}).fetch();
+     rol = await Perfil.create({prf_descripcion: params.rol || "user"}).fetch();
      if(!rol) return res.ok({status: 400, data: "error al crear el rol"});
    }
    params.usu_perfil = rol.id;
@@ -50,7 +50,7 @@
    params.empresa = await Procedures.getCabeza( params );
    user = await User.create(params).fetch();
    if(!user) return res.badRequest(err);
-   user = await User.findOne({id: user.id}).populate('usu_perfil').populate('cabeza').populate('categoriaPerfil');
+   user = await User.findOne({id: user.id}).populate('usu_perfil')
    let tokens = await Procedures.creacionTokens( user );
    user.tokens = tokens;
    //let resul = await MensajeService.envios( { subtitulo: "Bienvenido a la plataforma LocomproAqui.com Usuario "+ user.usu_email +"! satisfecho el registro", emails: user.usu_email, creado: "123456", descripcion: "Espero que disfrutes trabajar con nuestra plataforma" });

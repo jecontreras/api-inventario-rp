@@ -1,5 +1,5 @@
 /**
- * Factura.js
+ * ArticuloLogDetallado.js
  *
  * @description :: A model definition represents a database table/collection.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
@@ -12,39 +12,34 @@ module.exports = {
     //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
     //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
+
+    valorAnterior:{
+      type: 'integer'
+    },
+    valor:{
+      type: 'integer'
+    },
+    valorTotal:{
+      type: 'integer'
+    },
+    tipoEntrada:{
+      type: 'integer' // 0 entrada 1 salida
+    },
     codigo:{
       type: 'string'
     },
-    fecha:{
-      type: 'string'
+    user: {
+      model: 'user'
     },
-    monto:{
-      type: 'integer'
+    articuloLog:{
+      model: 'articuloLog'
     },
-    entrada:{
-      type: 'integer',
-      defaultsTo: 0 // 0 entrada 1 salida
-    },
-    provedor:{
-      model: 'provedor'
-    },
-    qr:{
-      type: 'string'
-    },
-    descripcion:{
-      type: 'string'
-    },
-    foto:{
-      type: 'string'
+    articuloTalla:{
+      model :'articuloTalla'
     },
     estado:{
-      type: 'integer',
-      defaultsTo: 0 // 0 activo 1 eliminado
-    },
-    user:{ 
-      model: 'user'
+      type: 'integer' // 0 activo 1 eliminado
     }
-
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
     //  ╚═╝╩ ╩╚═╝╚═╝═╩╝╚═╝
