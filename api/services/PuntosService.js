@@ -24,6 +24,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
  if( puntoAnt == false ) puntoAnt = { ordenando:0, valorTotal: 0 };
  if( !data.valor ) return { status: 400, data: "Error en el valor entrante undefined" };
  //data.valor = data.valor - 10;
+ //console.log("***27datas", data );
  if( data.tipoEntrada == 0 ) {
     data.valorAnterior = puntoAnt.valorTotal;
     data.tipoEntrada = 0;
@@ -31,7 +32,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
  }else{
     data.valorAnterior = puntoAnt.valorTotal;
     data.tipoEntrada = 1;
-    data.valorTotal = parseFloat( ( puntoAnt.valorTotal || 0 ) ) - parseFloat( data.valor );
+    data.valorTotal = ( parseFloat( ( puntoAnt.valorTotal || 0 ) ) - parseFloat( data.valor ) ) || 0;
  }
  data.ordenando = puntoAnt.ordenando+1;
  data.codigo = codigo();
@@ -40,7 +41,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
  data.articuloLog = resultado.id;
  let rm = await Procedures.getPuntosResumen( data );
  if( rm[0]) rm = rm[0];
- console.log("**** Pasando",rm);
+ //console.log("**** Pasando",rm);
  await ArticuloLog.update( { id: resultado.id }, { articuloLogDetallado: rm.id } )
  return resultado;
 }
@@ -48,7 +49,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
 Procedures.getPunto = async( data )=>{
     console.log( data );
     let resultado = await ArticuloLog.find( { where: { articuloTalla: data.articuloTalla }, sort: "ordenando DESC" }).limit(1);
-    console.log("Esto es =>>>>>>>>>>", resultado, data );
+    //console.log("Esto es =>>>>>>>>>>", resultado, data );
     resultado = resultado[0];
     if( resultado ) return resultado;
     else return false;
