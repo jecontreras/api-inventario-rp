@@ -22,7 +22,7 @@ module.exports = {
       type: 'string'
     },
     cantidad:{
-      type: 'string'
+      type: 'integer'
     },
     listColor:{
       model: 'articuloColor'
