@@ -43,6 +43,9 @@ module.exports = {
     },
     user:{ 
       model: 'user'
+    },
+    tipoFactura:{
+      type: "integer" // 0 permitido 1 normal
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗

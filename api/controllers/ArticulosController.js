@@ -28,6 +28,7 @@
     let params = req.allParams();
     let resultado = Object();
     resultado = await Procedures.createArticulo( params.articulo );
+    params.id = resultado.id;
     let result = Object();
     for( let row of params.listDetalle ){
        let ml = _.clone(row);
@@ -40,7 +41,7 @@
             await Procedures.createArticuloTalla( ms );
         }
     }
-    return res.ok(resultado);
+    return res.ok(params);
  }
 
  Procedures.update = async( req, res )=>{

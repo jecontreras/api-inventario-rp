@@ -32,6 +32,7 @@
     let clone = req.allParams();
     let resultado = Object();
     resultado = await Procedures.createFactura( params.factura );
+    params.id = resultado.id;
     let result = Object();
     for( let row of params.listArticulo ){
         row.factura = resultado.id;
