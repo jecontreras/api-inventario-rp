@@ -36,8 +36,9 @@
     let result = Object();
     for( let row of params.listArticulo ){
         row.factura = resultado.id;
+        row.cantidad = row.cantidadSelect;
         result = await Procedures.createArticuloFactura( row );
-        //console.log("***", clone, result)
+        //console.log("***", row)
         await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: clone.factura.entrada, user: clone.factura.user, articuloTalla: result.articuloTalla } );
     }
     return res.status(200).send( { status:200, data: params } );

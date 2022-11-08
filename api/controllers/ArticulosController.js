@@ -38,11 +38,28 @@
             let ms = _.clone(item);
             ms.articulo = resultado.id;
             ms.listColor = result.id;
-            await Procedures.createArticuloTalla( ms );
+            let resul = await Procedures.createArticuloTalla( ms );
+            await Procedures.CantidadesDs( { valor: ms.cantidad, tipoEntrada: 0, user: resultado.user, articuloTalla: resul.id } );
         }
     }
     return res.ok(params);
  }
+
+ Procedures.CantidadesDs = async( data )=>{
+   let datas = {
+       valor: data.valor,
+       tipoEntrada: data.tipoEntrada,
+       articuloTalla: data.articuloTalla,
+       user: data.user
+     };
+     console.log("****", datas )
+     if (!datas.user || !datas.valor) return "Erro en los parametros";
+     let finix = await PuntosService.validandoEntrada(datas);
+     //console.log("******", finix )
+     if( !finix ) return false;
+     await Procedures.updateArticuloTalla( { id: datas.articuloTalla, cantidad: finix.valorTotal } );
+     return "ok";
+}
 
  Procedures.update = async( req, res )=>{
    let resultado = Object();

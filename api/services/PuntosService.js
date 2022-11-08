@@ -37,7 +37,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
  data.ordenando = puntoAnt.ordenando+1;
  data.codigo = codigo();
  resultado = await ArticuloLog.create( data ).fetch();
-//  console.log("dataOPt", data);
+ //console.log("dataOPt", data);
  data.articuloLog = resultado.id;
  let rm = await Procedures.getPuntosResumen( data );
  if( rm[0]) rm = rm[0];

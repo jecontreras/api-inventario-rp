@@ -52,6 +52,9 @@ module.exports = {
     estado:{
       type: 'integer',
       defaultsTo: 0 // 0 activo 1 eliminado
+    },
+    user:{
+      model: 'user'
     }
 
 
