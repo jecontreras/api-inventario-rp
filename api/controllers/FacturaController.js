@@ -39,7 +39,22 @@
         row.cantidad = row.cantidadSelect;
         result = await Procedures.createArticuloFactura( row );
         //console.log("***", row)
-        await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: clone.factura.entrada, user: clone.factura.user, articuloTalla: result.articuloTalla } );
+        let entrada = clone.factura.entrada;
+        let texto = "Entrando inventario";
+        console.log("*************", resultado)
+        if( resultado.entrada == 1 ) { 
+            texto = "Saliendo articulo";
+            entrada = 1;
+        }
+        if( resultado.entrada == 2 ) { 
+            texto = "Devolucion de articulo";
+            entrada = 0;
+        }
+        if( resultado.entrada == 3 ) {
+            texto = "Cambio del producto saliendo";
+            entrada = 1;
+        }
+        await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: entrada, user: clone.factura.user, articuloTalla: result.articuloTalla, descripcion: texto } );
     }
     return res.status(200).send( { status:200, data: params } );
  }
@@ -64,7 +79,8 @@
         valor: data.valor,
         tipoEntrada: data.tipoEntrada,
         articuloTalla: data.articuloTalla,
-        user: data.user
+        user: data.user,
+        descripcion: data.descripcion
       };
       //console.log("****", datas )
       if (!datas.user || !datas.valor) return "Erro en los parametros";

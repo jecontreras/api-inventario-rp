@@ -65,11 +65,12 @@ Procedures.getPuntosResumen = async( data )=>{
 
 Procedures.updatePuntosResumen = async( id, data )=>{
     // console.log( "***", data );
-    let resultado = await ArticuloLog.update( { id: id }, { 
+    let resultado = await ArticuloLogDetallado.update( { id: id }, { 
         valorAnteriror: data.valorAnterior,
         valor: data.valor,
         valorTotal: data.valorTotal,
-        tipoEntrada: data.tipoEntrada
+        tipoEntrada: data.tipoEntrada,
+        descripcion: data.descripcion
     } ).fetch();
     //console.log( "actualizando", resultado );
     return resultado;

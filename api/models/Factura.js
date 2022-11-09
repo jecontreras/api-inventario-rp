@@ -18,12 +18,15 @@ module.exports = {
     fecha:{
       type: 'string'
     },
+    nombreCliente:{
+      type: 'string'
+    },
     monto:{
       type: 'integer'
     },
     entrada:{
       type: 'integer',
-      defaultsTo: 0 // 0 entrada 1 salida
+      defaultsTo: 0 // 0 entrada 1 salida 2 devolucion 3 cambio
     },
     provedor:{
       model: 'provedor'

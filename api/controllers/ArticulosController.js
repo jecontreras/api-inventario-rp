@@ -39,7 +39,7 @@
             ms.articulo = resultado.id;
             ms.listColor = result.id;
             let resul = await Procedures.createArticuloTalla( ms );
-            await Procedures.CantidadesDs( { valor: ms.cantidad, tipoEntrada: 0, user: resultado.user, articuloTalla: resul.id } );
+            await Procedures.CantidadesDs( { valor: ms.cantidad, tipoEntrada: 0, user: resultado.user, articuloTalla: resul.id, descripcion: "Entrada inicial" } );
         }
     }
     return res.ok(params);
@@ -50,7 +50,8 @@
        valor: data.valor,
        tipoEntrada: data.tipoEntrada,
        articuloTalla: data.articuloTalla,
-       user: data.user
+       user: data.user,
+       descripcion: data.descripcion
      };
      console.log("****", datas )
      if (!datas.user || !datas.valor) return "Erro en los parametros";

@@ -41,6 +41,9 @@ module.exports = {
    },
    user: {
     model: 'user'
+   },
+   descripcion:{
+    type: 'string'
    }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
