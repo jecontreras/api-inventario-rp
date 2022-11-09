@@ -69,7 +69,8 @@
         articulo: data.articulo,
         articuloTalla: data.articuloTalla,
         articuloColor: data.articuloColor,
-        cantidad: data.cantidad
+        cantidad: data.cantidad,
+        precio: data.precio
     };
     return await FacturaArticulo.create( querys ).fetch();
  }
