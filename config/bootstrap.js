@@ -10,7 +10,8 @@
  */
 
 module.exports.bootstrap = async function() {
-
+  let Tareas = require('./tarea');
+  await Tareas.tarea();
   // By convention, this is a good place to set up fake data during development.
   //
   // For example:

@@ -13,19 +13,22 @@
      return res.ok(resultado);
  }
 
- Procedures.inventario = async( req, res)=>{
+ Procedures.detalle = async( req, res)=>{
     let params = req.allParams();
     let resultado = Object();
-    resultado = await ArticuloColor.find( { where: { estado: 0 } } );
-    for( let row of resultado ){
-        row.listTalla = await Procedures.getArticulos( params.idColor );
+    resultado = await Inventario.find( { where: { estado: 0 } } );
+    resultado = resultado[0];
+    resultado.listColor = await ArticuloColor.find( { where: { estado: 0 } } );
+    console.log("***************", resultado)
+    for( let row of resultado.listColor ){
+        row.listTalla = await Procedures.getArticulos( params.color );
     }
-    return resultado;
+    return res.ok( resultado );
  }
 
- Procedures.getArticulos = async( data )=>{
+ Procedures.getArticulos = async( id )=>{
     let resultado = Array();
-    resultado = await ArticuloTalla.find( { where: { estado: 0, listColor: data.id } } ).limit( 1000000 );
+    resultado = await ArticuloTalla.find( { where: { estado: 0, listColor: id } } ).limit( 1000000 );
     return resultado;
  }
 
