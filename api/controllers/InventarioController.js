@@ -18,10 +18,14 @@
     let resultado = Object();
     resultado = await Inventario.find( { where: { estado: 0 } } );
     resultado = resultado[0];
-    resultado.listColor = await ArticuloColor.find( { where: { estado: 0 } } );
-    console.log("***************", resultado)
-    for( let row of resultado.listColor ){
-        row.listTalla = await Procedures.getArticulos( params.color );
+    resultado.listArticulo = await Articulos.find( { where: { estado: 0 } } ).limit( 1000000 );
+    for( let item of resultado.listArticulo ){
+        item.cantidad = 0;
+        item.listColor = await ArticuloColor.find( { where: { estado: 0, articulo: item.id } } );
+        for( let row of item.listColor ){
+            row.listTalla = await Procedures.getArticulos( params.color );
+            for( let ol of row.listTalla ) item.cantidad+=Number( ol.cantidad || 0 );
+        }
     }
     return res.ok( resultado );
  }
