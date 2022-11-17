@@ -10,6 +10,10 @@
      let params = req.allParams();
      let resultado = Object();
      resultado = await QuerysServices(ArticuloTalla, params);
+     for( let row of resultado.data ){
+        row.articulo = await Articulos.findOne( { id: row.articulo } );
+        row.listColor = await ArticuloColor.findOne( { id: row.listColor  });
+     }
      return res.ok(resultado);
  }
  module.exports = Procedures;
