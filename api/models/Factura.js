@@ -42,7 +42,7 @@ module.exports = {
     },
     estado:{
       type: 'integer',
-      defaultsTo: 0 // 0 activo 1 eliminado
+      defaultsTo: 0 // 0 activo 1 eliminado 2 asentar
     },
     user:{ 
       model: 'user'

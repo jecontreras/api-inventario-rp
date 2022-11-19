@@ -37,24 +37,27 @@
     for( let row of params.listArticulo ){
         row.factura = resultado.id;
         row.cantidad = row.cantidadSelect;
+        row.estado = resultado.estado;
         result = await Procedures.createArticuloFactura( row );
         //console.log("***", row)
         let entrada = clone.factura.entrada;
         let texto = "Entrando inventario";
         console.log("*************", resultado)
-        if( resultado.entrada == 1 ) { 
-            texto = "Saliendo articulo";
-            entrada = 1;
+        if( resultado.estado == 2 ) {
+            if( resultado.entrada == 1 ) { 
+                texto = "Saliendo articulo";
+                entrada = 1;
+            }
+            if( resultado.entrada == 2 ) { 
+                texto = "Devolucion de articulo";
+                entrada = 0;
+            }
+            if( resultado.entrada == 3 ) {
+                texto = "Cambio del producto saliendo";
+                entrada = 1;
+            }
+            await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: entrada, user: clone.factura.user, articuloTalla: result.articuloTalla, descripcion: texto } );
         }
-        if( resultado.entrada == 2 ) { 
-            texto = "Devolucion de articulo";
-            entrada = 0;
-        }
-        if( resultado.entrada == 3 ) {
-            texto = "Cambio del producto saliendo";
-            entrada = 1;
-        }
-        await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: entrada, user: clone.factura.user, articuloTalla: result.articuloTalla, descripcion: texto } );
     }
     return res.status(200).send( { status:200, data: params } );
  }
@@ -70,7 +73,8 @@
         articuloTalla: data.articuloTalla,
         articuloColor: data.articuloColor,
         cantidad: data.cantidad,
-        precio: data.precio
+        precio: data.precio,
+        estado: data.estado
     };
     return await FacturaArticulo.create( querys ).fetch();
  }
