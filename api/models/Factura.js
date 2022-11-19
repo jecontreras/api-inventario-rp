@@ -49,6 +49,10 @@ module.exports = {
     },
     tipoFactura:{
       type: "integer" // 0 permitido 1 normal
+    },
+    asentado:{
+      type: 'boolean',
+      defaultsTo: false
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
