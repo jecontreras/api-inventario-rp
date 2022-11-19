@@ -48,6 +48,29 @@
     return res.status(200).send( { status:200, data: params } );
  }
 
+ Procedures.update = async( req, res )=>{
+    let parametros = req.allParams();
+    let resultado = Object();
+    if( !parametros.id ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro el id"} );
+    resultado = await Factura.update( { id: parametros.id }, parametros );
+
+    for( let row of parametros.listArticulo ){
+        if( row.id ) await Procedures.updateFacturaArticulo( { id: row.id, cantidad: row.cantidadSelect } );
+        if( row.eliminado == true ) await Procedures.updateFacturaArticulo( { id: row.id, estado: 1 } );
+        if( !row.id ) {
+            row.factura = resultado.id;
+            row.cantidad = row.cantidadSelect;
+            row.estado = resultado.estado;
+            await Procedures.createArticuloFactura( row );
+        }
+    }
+    return res.status(200).send( { status:200, data: parametros } );
+ }
+
+ Procedures.updateFacturaArticulo = async( data )=>{
+    return FacturaArticulo.update( { id: data.id }, data );
+ }
+
  Procedures.asentarFactura = async( req, res )=>{
     let params = req.allParams();
     let resultado = Object();
