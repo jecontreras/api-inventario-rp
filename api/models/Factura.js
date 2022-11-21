@@ -48,7 +48,7 @@ module.exports = {
       model: 'user'
     },
     tipoFactura:{
-      type: "integer" // 0 permitido 1 normal
+      type: "integer" // 0 permitido 1 normal 5 no asignada
     },
     asentado:{
       type: 'boolean',

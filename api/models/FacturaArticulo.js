@@ -33,6 +33,10 @@ module.exports = {
     estado:{
       type: 'integer',
       defaultsTo: 0 // 0 activo 1 eliminado
+    },
+    precio:{
+      type: 'integer',
+      defaultsTo: 0
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗

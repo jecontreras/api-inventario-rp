@@ -5,6 +5,7 @@
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
 
+ const _ = require('lodash');
 
  let Procedures = Object();
  Procedures.querys = async (req, res)=>{
@@ -52,8 +53,9 @@
     let parametros = req.allParams();
     let resultado = Object();
     if( !parametros.id ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro el id"} );
-    resultado = await Factura.update( { id: parametros.id }, parametros );
-
+    let data = _.clone( parametros );
+    resultado = await Factura.update( { id: data.id }, data );
+    //console.log("************", parametros)
     for( let row of parametros.listArticulo ){
         if( row.id ) await Procedures.updateFacturaArticulo( { id: row.id, cantidad: row.cantidadSelect } );
         if( row.eliminado == true ) await Procedures.updateFacturaArticulo( { id: row.id, estado: 1 } );
@@ -76,11 +78,13 @@
     let resultado = Object();
     if( !params.id ) return res.status( 200 ).send(  { status: 400, data: "Error id undefined" } );
 
-    resultado = Factura.findOne( { where: { id: params.id, asentado: false, estado: 0 } } );
+    resultado = await Factura.findOne( { where: { id: params.id, asentado: false, estado: 0 } } );
     if( !resultado ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro la factura" } );
 
     let listArticulos = await FacturaArticulo.find( { where: { factura: resultado.id, estado: 0 } } ).limit( 100 );
-
+    let entrada;
+    let texto;
+    console.log("*********", resultado)
     for( let row of listArticulos ){
         if( resultado.entrada == 1 ) { 
             texto = "Saliendo articulo";
@@ -96,7 +100,8 @@
         }
         await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla, descripcion: texto } );
     }
-    return res.status( 200 ).sned( { status: 200, data: "Exitoso asentada" } );
+    await Factura.update( { id: resultado.id }, { asentado: true } );
+    return res.status( 200 ).send( { status: 200, data: "Exitoso asentada" } );
  }
 
  Procedures.createFactura = async( data )=>{
