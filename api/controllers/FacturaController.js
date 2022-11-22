@@ -42,8 +42,6 @@
         row.estado = resultado.estado;
         result = await Procedures.createArticuloFactura( row );
         //console.log("***", row)
-        let entrada = clone.factura.entrada;
-        let texto = "Entrando inventario";
         console.log("*************", resultado)
     }
     return res.status(200).send( { status:200, data: params } );
@@ -82,8 +80,8 @@
     if( !resultado ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro la factura" } );
 
     let listArticulos = await FacturaArticulo.find( { where: { factura: resultado.id, estado: 0 } } ).limit( 100 );
-    let entrada;
-    let texto;
+    let entrada = resultado.entrada;
+    let texto = "Entrando inventario";
     console.log("*********", resultado)
     for( let row of listArticulos ){
         if( resultado.entrada == 1 ) { 

@@ -33,6 +33,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
     data.valorAnterior = puntoAnt.valorTotal;
     data.tipoEntrada = 1;
     data.valorTotal = ( parseFloat( ( puntoAnt.valorTotal || 0 ) ) - parseFloat( data.valor ) ) || 0;
+    data.valorTotal = data.valorTotal || 0;
  }
  data.ordenando = puntoAnt.ordenando+1;
  data.codigo = codigo();

@@ -113,7 +113,7 @@
  
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.login = async function(req, res){
-     User.findOne({usu_email: req.param('usu_email')}).populate('usu_perfil').populate('cabeza').exec(function(err, user){
+     User.findOne({usu_email: req.param('usu_email')}).populate('usu_perfil').exec(function(err, user){
          if(err) return res.send({'success': false,'message': 'Peticion fallida','data': err});
          if(!user) return res.send({'success': false,'message': 'Usuario no encontrado','data': user});
          Passwords.checkPassword({
