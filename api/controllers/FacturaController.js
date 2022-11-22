@@ -80,9 +80,13 @@
     if( !resultado ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro la factura" } );
 
     let listArticulos = await FacturaArticulo.find( { where: { factura: resultado.id, estado: 0 } } ).limit( 100 );
+    let validador = await Procedures.validarCantidades( listArticulos );
+
+    if( !validador.estatus ) return res.status( 200 ).send( { status: 400, data: validador.data } );
     let entrada = resultado.entrada;
     let texto = "Entrando inventario";
-    console.log("*********", resultado)
+    //console.log("*********", resultado)
+
     for( let row of listArticulos ){
         if( resultado.entrada == 1 ) { 
             texto = "Saliendo articulo";
@@ -101,6 +105,29 @@
     await Factura.update( { id: resultado.id }, { asentado: true } );
     return res.status( 200 ).send( { status: 200, data: "Exitoso asentada" } );
  }
+
+ Procedures.validarCantidades = async( listArticulo )=>{
+    let listError = Array();
+    for( let row of listArticulo ){
+        let validador = await ArticuloTalla.findOne( { id: row.articuloTalla } );
+        if( !validador ) {
+            listError.push( { articulo: row.articulo, data: "Error no encontramos articuloTalla" } );
+            continue;
+        }
+        let populateTalla = await ArticuloTalla.findOne( { id: row.articuloTalla } );
+        let populateColor = await ArticuloColor.findOne( { id: row.articuloColor } );
+        if( populateTalla.cantidad < row.cantidad ) listError.push( { articulo: row.articulo, data: "Error No tienes suficiente cantidad inventario!!"+ " color " + populateColor.color  + " Talla " + populateTalla.talla + " Cantidad requerida: " + row.cantidad + " Cantidad Inventario " + populateTalla.cantidad  } );
+    }
+    if( listError.length == 0 ) return {
+        estatus: true,
+        data: listError
+    }
+    else return {
+        estatus: false,
+        data: listError
+    };
+ }
+
 
  Procedures.createFactura = async( data )=>{
     return await Factura.create( data ).fetch();
