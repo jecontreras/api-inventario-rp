@@ -132,13 +132,9 @@
       let finix = await PuntosService.validandoEntrada(datas);
       //console.log("******", finix )
       if( !finix ) return false;
-      await Procedures.updateArticuloTalla( { id: datas.articuloTalla, cantidad: finix.valorTotal } );
+      //await Procedures.updateArticuloTalla( { id: datas.articuloTalla, cantidad: finix.valorTotal } );
       return "ok";
  }
 
- Procedures.updateArticuloTalla = async( data )=>{
-    let resultado = Object();
-    resultado = await ArticuloTalla.update( { id: data.id }, { cantidad: data.cantidad } );
-    return resultado;
- }
+
  module.exports = Procedures;

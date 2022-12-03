@@ -29,6 +29,10 @@ Procedures.validandoEntrada = async( data, opt )=>{
     data.valorAnterior = puntoAnt.valorTotal;
     data.tipoEntrada = 0;
     data.valorTotal = parseFloat( ( puntoAnt.valorTotal || 0 ) ) + parseFloat( data.valor );
+ }else if( data.tipoEntrada == 0 ){
+    data.valorAnterior = puntoAnt.valorTotal;
+    data.tipoEntrada = 2;
+    data.valorTotal = data.valor;
  }else{
     data.valorAnterior = puntoAnt.valorTotal;
     data.tipoEntrada = 1;
@@ -44,8 +48,15 @@ Procedures.validandoEntrada = async( data, opt )=>{
  if( rm[0]) rm = rm[0];
  //console.log("**** Pasando",rm);
  await ArticuloLog.update( { id: resultado.id }, { articuloLogDetallado: rm.id } )
+ await Procedures.updateArticuloTalla( { id: data.articuloTalla, cantidad: data.valorTotal } )
  return resultado;
 }
+
+Procedures.updateArticuloTalla = async( data )=>{
+    let resultado = Object();
+    resultado = await ArticuloTalla.update( { id: data.id }, { cantidad: data.cantidad } );
+    return resultado;
+ }
 
 Procedures.getPunto = async( data )=>{
     console.log( data );

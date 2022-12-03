@@ -27,15 +27,15 @@ module.exports = {
     articuloTalla:{
       model: 'articuloTalla'
     },
-    provedor:{
-      model: 'provedor'
+    diferencia:{
+      type: 'integer'
     },
     user:{
       model: 'user'
     },
     estado:{
       type: 'integer',
-      defaultsTo: 0 // 0 activo 1 eliminado
+      defaultsTo: 0 // 0 activo 1 eliminado 2 asentado
     }
 
 
