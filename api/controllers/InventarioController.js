@@ -6,10 +6,15 @@
  */
 
  let Procedures = Object();
+ const _ = require('lodash');
+
  Procedures.querys = async (req, res)=>{
      let params = req.allParams();
      let resultado = Object();
      resultado = await QuerysServices(Inventario, params);
+     for( let row of resultado.data ){
+        row.listArticulo = await InventarioEntrada.find( { where: { estado: 0, inventario: row.id } } ).populate( "articulo" ).populate( "articuloTalla" );
+     }
      return res.ok(resultado);
  }
 
@@ -24,7 +29,10 @@
         item.listColor = await ArticuloColor.find( { where: { estado: 0, articulo: item.id } } );
         for( let row of item.listColor ){
             row.listTalla = await Procedures.getArticulos( params.color );
-            for( let ol of row.listTalla ) item.cantidad+=Number( ol.cantidad || 0 );
+            for( let ol of row.listTalla ) {
+                item.cantidad+=Number( ol.cantidad || 0 );
+                ol.cantidadReal = Number( ol.cantidad || 0 );
+            }
         }
     }
     return res.ok( resultado );
@@ -39,7 +47,8 @@
  Procedures.create = async( req, res )=>{
     let params = req.allParams();
     let result = Object();
-    result = await Inventario.create( params );
+    let clon = _.clone( params );
+    result = await Inventario.create( clon ).fetch();
     for( let row of params.listArticulo ){
         await InventarioEntrada.create( {
             inventario: result.id,
