@@ -37,8 +37,15 @@ module.exports = {
     precio:{
       type: 'integer',
       defaultsTo: 0
+    },
+    precioOtras:{
+      type: 'integer',
+      defaultsTo: 0
+    },
+    precioClienteDrop:{
+      type: 'integer',
+      defaultsTo: 0
     }
-
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
     //  ╚═╝╩ ╩╚═╝╚═╝═╩╝╚═╝

@@ -141,7 +141,9 @@
         articuloColor: data.articuloColor,
         cantidad: data.cantidad,
         precio: data.precio,
-        estado: data.estado
+        estado: data.estado,
+        precioOtras: data.precioOtras,
+        precioClienteDrop: data.precioClienteDrop
     };
     return await FacturaArticulo.create( querys ).fetch();
  }

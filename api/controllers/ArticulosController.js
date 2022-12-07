@@ -65,13 +65,23 @@
  Procedures.update = async( req, res )=>{
    let resultado = Object();
    let params = req.allParams();
-   
+
+   if( params.completo == true ){
+      params.articulo = await Articulos.findOne( { id: params.id } );
+      params.articulo.estado = params.estado;
+      params.listDetalle = await ArticuloColor.find( { articulo: params.id } );
+   }
+
+   console.log("****+", params.listDetalle, params)
    if( !params.articulo.id ) return res.status(400).send( { data:"Error id undefines" } );
-   //console.log("****+", params.articulo)
    resultado = await Articulos.update( { id: params.articulo.id }, params.articulo )
    let result = Object();
    for( let row of params.listDetalle ){
       //console.log("****51", row)
+      if( params.completo == true ) {
+         row.listTalla = await ArticuloTalla.find( { articulo: row.id });
+         row.estado = 1;
+      }
       if( row.id ) await Procedures.updateArticuloColor( { id: row.id, codigo: row.codigo, color: row.color, estado: row.estado, articulo: row.articulo } );
       else {
          row.articulo = params.id;
