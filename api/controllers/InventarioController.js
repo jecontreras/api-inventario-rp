@@ -23,6 +23,7 @@
     let resultado = Object();
     resultado = await Inventario.find( { where: { estado: 0 } } );
     resultado = resultado[0];
+    if( !resultado ) return res.ok( { data: 'no existe'} ); 
     resultado.listArticulo = await Articulos.find( { where: { estado: 0, or: [
         {
           codigo: {
