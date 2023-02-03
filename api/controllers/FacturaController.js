@@ -79,8 +79,8 @@
     resultado = await Factura.findOne( { where: { id: params.id, asentado: false, estado: 0 } } );
     if( !resultado ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro la factura" } );
 
-    let listArticulos = await FacturaArticulo.find( { where: { factura: resultado.id, estado: 0 } } ).limit( 100 );
-    let validador = await Procedures.validarCantidades( listArticulos );
+    /*let listArticulos = await FacturaArticulo.find( { where: { factura: resultado.id, estado: 0 } } ).limit( 100 );
+    let validador = await Procedures.validarCantidades( listArticulos );*/
 
     if( !validador.estatus ) return res.status( 200 ).send( { status: 400, data: validador.data } );
     let entrada = resultado.entrada;
@@ -88,11 +88,11 @@
     //console.log("*********", resultado)
 
     for( let row of listArticulos ){
-        if( resultado.entrada == 1 ) { 
+        if( resultado.entrada == 1 ) {
             texto = "Saliendo articulo";
             entrada = 1;
         }
-        if( resultado.entrada == 2 ) { 
+        if( resultado.entrada == 2 ) {
             texto = "Devolucion de articulo";
             entrada = 0;
         }
