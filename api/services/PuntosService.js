@@ -25,11 +25,11 @@ Procedures.validandoEntrada = async( data, opt )=>{
  if( !data.valor ) return { status: 400, data: "Error en el valor entrante undefined" };
  //data.valor = data.valor - 10;
  //console.log("***27datas", data );
- if( data.tipoEntrada == 0 ) {
+ if( data.tipoEntrada === 0 ) {
     data.valorAnterior = puntoAnt.valorTotal;
     data.tipoEntrada = 0;
     data.valorTotal = parseFloat( ( puntoAnt.valorTotal || 0 ) ) + parseFloat( data.valor );
- }else if( data.tipoEntrada == 0 ){
+ }else if( data.tipoEntrada === 3 ){
     data.valorAnterior = puntoAnt.valorTotal;
     data.tipoEntrada = 2;
     data.valorTotal = data.valor;
@@ -48,6 +48,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
  if( rm[0]) rm = rm[0];
  //console.log("**** Pasando",rm);
  await ArticuloLog.update( { id: resultado.id }, { articuloLogDetallado: rm.id } )
+ console.log("****Puntos", data)
  await Procedures.updateArticuloTalla( { id: data.articuloTalla, cantidad: data.valorTotal } )
  return resultado;
 }
@@ -77,7 +78,7 @@ Procedures.getPuntosResumen = async( data )=>{
 
 Procedures.updatePuntosResumen = async( id, data )=>{
     // console.log( "***", data );
-    let resultado = await ArticuloLogDetallado.update( { id: id }, { 
+    let resultado = await ArticuloLogDetallado.update( { id: id }, {
         valorAnteriror: data.valorAnterior,
         valor: data.valor,
         valorTotal: data.valorTotal,

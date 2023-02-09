@@ -31,6 +31,17 @@ module.exports = {
     asentado:{
       type: 'boolean',
       defaultsTo: false
+    },
+    totalQuantityDes:{
+      type: 'integer',
+      defaultsTo: 0
+    },
+    totalDes:{
+      type: 'integer',
+      defaultsTo: 0
+    },
+    user:{
+      model: 'user'
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
