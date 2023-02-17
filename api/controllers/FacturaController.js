@@ -6,6 +6,7 @@
  */
 
  const _ = require('lodash');
+ const moment = require('moment');
 
  let Procedures = Object();
  Procedures.querys = async (req, res)=>{
@@ -80,7 +81,7 @@
     if( !resultado ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro la factura" } );
 
     let listArticulos = await FacturaArticulo.find( { where: { factura: resultado.id, estado: 0 } } ).limit( 100 );
-    if( params.entrada == 1 || params.entrada == 3 ){
+    if( params.entrada === 1 || params.entrada === 3 ){
       let validador = await Procedures.validarCantidades( listArticulos );
 
       if( !validador.estatus ) return res.status( 200 ).send( { status: 400, data: validador.data } );
@@ -104,7 +105,7 @@
         }
         await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla, descripcion: texto } );
     }
-    await Factura.update( { id: resultado.id }, { asentado: true } );
+    await Factura.update( { id: resultado.id }, { asentado: true, fechaasentado: new moment().format("DD/MM/YYYY, h:mm:ss a") } );
     return res.status( 200 ).send( { status: 200, data: "Exitoso asentada" } );
  }
 
