@@ -28,7 +28,7 @@ Procedures.create = async ( req, res )=>{
     } ).fetch();
     if( !result.listMoney ) result.listMoney = [];
     result.listMoney.push( resultR );
-    let data = { passMoney: item.remaining || 0 };
+    let data = { passMoney: item.passMoney || 0 };
     if( item.remaining === 0 ) data.coinFinix = true;
     await Factura.update( { id: item.id },  data );
   }
