@@ -42,7 +42,7 @@ module.exports = {
     },
     estado:{
       type: 'integer',
-      defaultsTo: 0 // 0 activo 1 eliminado 2 asentar
+      defaultsTo: 0 // 0 activo 1 eliminado 2 asentar 3 devolucion
     },
     user:{
       model: 'user'
@@ -64,7 +64,13 @@ module.exports = {
     passMoney:{
       type: 'integer', // cuanto dinero se abono a esta factura
       defaultsTo: 0
-    }
+    },
+    detailsReturn:{
+      type: 'string'
+    },
+    cdFactura:{
+      type: 'string'
+    },
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗

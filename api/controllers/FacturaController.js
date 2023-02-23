@@ -34,6 +34,7 @@
     let params = req.allParams();
     let clone = req.allParams();
     let resultado = Object();
+    if( params.factura.cdFactura ) await Procedures.returnInvoice( {id: params.factura.cdFactura });
     resultado = await Procedures.createFactura( params.factura );
     params.id = resultado.id;
     let result = Object();
@@ -46,6 +47,16 @@
         console.log("*************", resultado)
     }
     return res.status(200).send( { status:200, data: params } );
+ }
+
+ Procedures.returnInvoice = async( data )=> {
+  let resultado = Object();
+  resultado = await Factura.update( { id: data.id }, { estado: 3, detailsReturn: "return invoice new invoice" });
+  resultado = await FacturaArticulo.find( { factura: data.id, estado: 0  } ).limit( 10000 );
+  for( const row of resultado ){
+    await FacturaArticulo.update( { id: row.id }, { estado: 1 } );
+  }
+  return true;
  }
 
  Procedures.update = async( req, res )=>{
@@ -139,9 +150,9 @@
  Procedures.createArticuloFactura = async( data )=>{
     let querys = {
         factura: data.factura,
-        articulo: data.articulo,
-        articuloTalla: data.articuloTalla,
-        articuloColor: data.articuloColor,
+        articulo: data.articulo.id || data.articulo,
+        articuloTalla: data.articuloTalla.id || data.articuloTalla,
+        articuloColor: data.articuloColor.id || data.articuloColor,
         cantidad: data.cantidad,
         precio: data.precio,
         estado: data.estado,
