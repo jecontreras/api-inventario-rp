@@ -15,7 +15,7 @@
      resultado = await QuerysServices(Factura, params);
      for(let row of resultado.data ){
         if( row.provedor ) row.provedor = await Provedor.findOne( { where: { id: row.provedor } } );
-        row.listFacturaArticulo = await FacturaArticulo.find( { where: { factura: row.id } });
+        row.listFacturaArticulo = await FacturaArticulo.find( { where: { factura: row.id, estado: 0 } });
         for( let item of  row.listFacturaArticulo ){
             item.articulo = await Articulos.findOne( { id: item.articulo } );
             if( item.articulo ) {
@@ -34,7 +34,7 @@
     let params = req.allParams();
     let clone = req.allParams();
     let resultado = Object();
-    if( params.factura.cdFactura ) await Procedures.returnInvoice( {id: params.factura.cdFactura });
+    //if( params.factura.cdFactura ) await Procedures.returnInvoice( {id: params.factura.cdFactura });
     resultado = await Procedures.createFactura( params.factura );
     params.id = resultado.id;
     let result = Object();
@@ -64,16 +64,55 @@
     let resultado = Object();
     if( !parametros.id ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro el id"} );
     let data = _.clone( parametros );
-    resultado = await Factura.update( { id: data.id }, data );
-    //console.log("************", parametros)
-    for( let row of parametros.listArticulo ){
-        if( row.id ) await Procedures.updateFacturaArticulo( { id: row.id, cantidad: row.cantidadSelect } );
-        if( row.eliminado == true ) await Procedures.updateFacturaArticulo( { id: row.id, estado: 1 } );
+    resultado = await Factura.update( { id: data.id }, data ).fetch();
+    resultado = resultado[0];
+    //console.log("************68", resultado)
+    for( let row of parametros.listArticulo || [] ){
+
+        if( row.id && row.eliminado == false ) {
+          if( resultado.asentado == true ){
+
+            let entrada = 1;
+            let texto = "Saliendo articulo";
+
+            const filter = await FacturaArticulo.findOne( { id: row.id });
+            let cantidad = 0;
+            if( row.cantidadSelect  >= filter.cantidad   ) {
+              cantidad = row.cantidadSelect - filter.cantidad;
+              entrada = 1;
+              texto = "Saliendo articulo de factura ya asentada";
+            }
+            else {
+              cantidad = filter.cantidad - row.cantidadSelect;
+              texto = "Devolucion de articulo de factura ya asentada";
+              entrada = 0;
+            }
+            console.log( "91******", texto, "****",cantidad, "****",entrada)
+            if( cantidad >= 1 ) await Procedures.CantidadesDs( { valor: cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id, descripcion: texto, asentado: true } );
+          }
+          await Procedures.updateFacturaArticulo( { id: row.id, cantidad: row.cantidadSelect } );
+        }
+        if( row.eliminado == true ) {
+          if( resultado.asentado == true ){
+            const filter = await FacturaArticulo.findOne( { id: row.id } );
+            let entrada = 0;
+            let texto = "Devolucion de articulo de factura ya asentada";
+            if( filter ) await Procedures.CantidadesDs( { valor: filter.cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id, descripcion: texto, asentado: true } );
+          }
+          await Procedures.updateFacturaArticulo( { id: row.id, estado: 1 } );
+        }
         if( !row.id ) {
             row.factura = resultado.id;
             row.cantidad = row.cantidadSelect;
             row.estado = resultado.estado;
-            await Procedures.createArticuloFactura( row );
+            const off = await Procedures.createArticuloFactura( row );
+            //console.log("****OFFF109", off, "....", row)
+            if( resultado.asentado == true && off ){
+              let entrada = 1;
+              let texto = "Saliendo articulo de factura ya asentada";
+              let cantidad = row.cantidadSelect;
+              await Procedures.CantidadesDs( { valor: cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id || row.articuloTalla, descripcion: texto, asentado: true } );
+            }
         }
     }
     return res.status(200).send( { status:200, data: parametros } );
@@ -114,7 +153,8 @@
             texto = "Cambio del producto saliendo";
             entrada = 1;
         }
-        await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla, descripcion: texto } );
+        if( row.asentado === false ) await Procedures.CantidadesDs( { valor: row.cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla, descripcion: texto, asentado: true } );
+        await FacturaArticulo.update( { id: row.id }, { asentado:true } );
     }
     await Factura.update( { id: resultado.id }, { asentado: true, fechaasentado: new moment().format("DD/MM/YYYY, h:mm:ss a") } );
     return res.status( 200 ).send( { status: 200, data: "Exitoso asentada" } );
@@ -168,7 +208,8 @@
         tipoEntrada: data.tipoEntrada,
         articuloTalla: data.articuloTalla,
         user: data.user,
-        descripcion: data.descripcion
+        descripcion: data.descripcion,
+        asentado: data.asentado
       };
       //console.log("****", datas )
       if (!datas.user || !datas.valor) return "Erro en los parametros";

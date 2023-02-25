@@ -48,7 +48,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
  if( rm[0]) rm = rm[0];
  //console.log("**** Pasando",rm);
  await ArticuloLog.update( { id: resultado.id }, { articuloLogDetallado: rm.id } )
- console.log("****Puntos", data)
+ //console.log("****Puntos", data)
  await Procedures.updateArticuloTalla( { id: data.articuloTalla, cantidad: data.valorTotal } )
  return resultado;
 }

@@ -13,22 +13,27 @@ module.exports = {
     //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
     factura:{
-      model: 'factura'
+      model: 'factura',
+      required: true
     },
     articulo:{
-      model: 'articulos'
+      model: 'articulos',
+      required: true
     },
     articuloTalla:{
-      model: 'articuloTalla'
+      model: 'articuloTalla',
+      required: true
     },
     articuloColor:{
-      model: 'articuloColor'
+      model: 'articuloColor',
+      required: true
     },
     logs:{
       model: 'logs'
     },
     cantidad: {
-      type: 'integer'
+      type: 'integer',
+      required: true
     },
     estado:{
       type: 'integer',
@@ -36,7 +41,7 @@ module.exports = {
     },
     precio:{
       type: 'integer',
-      defaultsTo: 0
+      required: true
     },
     precioOtras:{
       type: 'integer',
@@ -45,7 +50,11 @@ module.exports = {
     precioClienteDrop:{
       type: 'integer',
       defaultsTo: 0
-    }
+    },
+    asentado:{
+      type: 'boolean',
+      defaultsTo: false
+    },
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
     //  ╚═╝╩ ╩╚═╝╚═╝═╩╝╚═╝
