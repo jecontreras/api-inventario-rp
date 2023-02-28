@@ -34,7 +34,6 @@
     let params = req.allParams();
     let clone = req.allParams();
     let resultado = Object();
-    //if( params.factura.cdFactura ) await Procedures.returnInvoice( {id: params.factura.cdFactura });
     resultado = await Procedures.createFactura( params.factura );
     params.id = resultado.id;
     let result = Object();
@@ -44,19 +43,8 @@
         row.estado = resultado.estado;
         result = await Procedures.createArticuloFactura( row );
         //console.log("***", row)
-        console.log("*************", resultado)
     }
     return res.status(200).send( { status:200, data: params } );
- }
-
- Procedures.returnInvoice = async( data )=> {
-  let resultado = Object();
-  resultado = await Factura.update( { id: data.id }, { estado: 3, detailsReturn: "return invoice new invoice" });
-  resultado = await FacturaArticulo.find( { factura: data.id, estado: 0  } ).limit( 10000 );
-  for( const row of resultado ){
-    await FacturaArticulo.update( { id: row.id }, { estado: 1 } );
-  }
-  return true;
  }
 
  Procedures.update = async( req, res )=>{
@@ -89,7 +77,8 @@
             }
             console.log( "91******", texto, "****",cantidad, "****",entrada)
             if( cantidad >= 1 ) await Procedures.CantidadesDs( { valor: cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id, descripcion: texto, asentado: true } );
-          }
+            await LogsServices.createLog( { txt: `Factura ya asentado y fue editada ${ resultado.codigo } Modificacion de la cantidad ${ row.cantidadSelect } del articulo ${ row.codigo }`} );
+          }else await LogsServices.createLog( { txt: `Factura editada ${ resultado.codigo } Modificacion de la cantidad ${ row.cantidadSelect } del articulo ${ row.codigo }`} );
           await Procedures.updateFacturaArticulo( { id: row.id, cantidad: row.cantidadSelect } );
         }
         if( row.eliminado == true ) {
@@ -157,6 +146,7 @@
         await FacturaArticulo.update( { id: row.id }, { asentado:true } );
     }
     await Factura.update( { id: resultado.id }, { asentado: true, fechaasentado: new moment().format("DD/MM/YYYY, h:mm:ss a") } );
+    await LogsServices.createLog( { txt: `Factura asentada ${ resultado.codigo } Fecha ${ new Date() }`} );
     return res.status( 200 ).send( { status: 200, data: "Exitoso asentada" } );
  }
 
@@ -219,6 +209,5 @@
       //await Procedures.updateArticuloTalla( { id: datas.articuloTalla, cantidad: finix.valorTotal } );
       return "ok";
  }
-
 
  module.exports = Procedures;

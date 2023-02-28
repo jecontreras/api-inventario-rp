@@ -50,6 +50,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
  await ArticuloLog.update( { id: resultado.id }, { articuloLogDetallado: rm.id } )
  //console.log("****Puntos", data)
  await Procedures.updateArticuloTalla( { id: data.articuloTalla, cantidad: data.valorTotal } )
+ await LogsServices.createLog( { txt: `Articulo Talla ${ data.articuloTalla} Modificado su cantidad ${ data.valor } valor anterior ${ data.valorAnterior } valor total ${ data.valorTotal } `} );
  return resultado;
 }
 
