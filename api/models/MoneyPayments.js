@@ -27,7 +27,7 @@ module.exports = {
     },
     asentado:{
       type: 'boolean',
-      defaultsTo: false
+      defaultsTo: true
     },
     remaining:{
       type: 'integer',
