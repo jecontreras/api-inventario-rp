@@ -33,6 +33,9 @@ module.exports = {
       type: 'integer',
       defaultsTo: 0
     },
+    codigo:{
+      type: 'string'
+    },
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
