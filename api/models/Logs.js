@@ -18,6 +18,13 @@ module.exports = {
     estado:{
       type: 'integer',
       defaultsTo: 0 // 0 activo 1 eliminado
+    },
+    typeLogs:{
+      type: 'integer',
+      defaultsTo: 0 // 0 txt normal 1 txt factura 2 txt articulos
+    },
+    ids:{
+      type: 'string'
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
