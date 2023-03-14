@@ -36,6 +36,10 @@ module.exports = {
     codigo:{
       type: 'string'
     },
+    loan:{
+      type: 'boolean',
+      defaultsTo: false
+    },
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗

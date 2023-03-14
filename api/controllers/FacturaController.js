@@ -37,7 +37,9 @@
     sumPending: 0,
     paymentsTotal: 0
   };
-  result = await Factura.find( { where: { user: params.user, entrada: 1, asentado: true, estado: 0} } ).limit(1000000000);
+  let querys = { where: { entrada: 0, user:params.user, asentado: true, estado: 0} };
+  if( params.provedor ) querys.where.provedor = params.provedor;
+  result = await Factura.find( querys ).limit(1000000000);
   dataFinix.sumPending = ( _.sumBy( result, (row)=> ( row.monto - ( row.passMoney || 0 ) ) ) );
   dataFinix.paymentsTotal = ( _.sumBy( result, (row)=> ( row.passMoney || 0 ) ) );
   return res.status(200).send( { status: 200, data: dataFinix } );
