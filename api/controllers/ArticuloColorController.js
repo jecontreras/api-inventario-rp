@@ -5,7 +5,7 @@
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
  
- let Procedures = Object();
+ let Procedures = Object(); 
  Procedures.querys = async (req, res)=>{
      let params = req.allParams();
      let resultado = Object();

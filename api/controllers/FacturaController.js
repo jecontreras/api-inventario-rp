@@ -30,6 +30,18 @@
      }
      return res.ok(resultado);
  }
+ Procedures.getDetail = async( req, res )=>{
+  let result = Object();
+  let params = req.allParams();
+  let dataFinix = {
+    sumPending: 0,
+    paymentsTotal: 0
+  };
+  result = await Factura.find( { where: { user: params.user, entrada: 1, asentado: true, estado: 0} } ).limit(1000000000);
+  dataFinix.sumPending = ( _.sumBy( result, (row)=> ( row.monto - ( row.passMoney || 0 ) ) ) );
+  dataFinix.paymentsTotal = ( _.sumBy( result, (row)=> ( row.passMoney || 0 ) ) );
+  return res.status(200).send( { status: 200, data: dataFinix } );
+ }
  Procedures.create = async( req, res )=>{
     let params = req.allParams();
     let clone = req.allParams();
