@@ -71,6 +71,9 @@ module.exports = {
     cdFactura:{
       type: 'string'
     },
+    expiration:{
+      type: 'string'
+    }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
