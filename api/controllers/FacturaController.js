@@ -201,7 +201,10 @@
         precio: data.precio,
         estado: data.estado,
         precioOtras: data.precioOtras,
-        precioClienteDrop: data.precioClienteDrop
+        precioClienteDrop: data.precioClienteDrop,
+        precioLokompro: data.precioLokompro,
+        precioArley: data.precioArley,
+        precioShipping: data.precioShipping
     };
     return await FacturaArticulo.create( querys ).fetch();
  }

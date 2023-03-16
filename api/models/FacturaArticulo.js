@@ -51,6 +51,18 @@ module.exports = {
       type: 'integer',
       defaultsTo: 0
     },
+    precioLokompro:{
+      type: 'integer',
+      defaultsTo: 0
+    },
+    precioArley:{
+      type: 'integer',
+      defaultsTo: 0
+    },
+    precioShipping:{
+      type: 'integer',
+      defaultsTo: 0
+    },
     asentado:{
       type: 'boolean',
       defaultsTo: false

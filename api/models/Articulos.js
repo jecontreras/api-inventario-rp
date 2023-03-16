@@ -52,6 +52,12 @@ module.exports = {
     precioShipping:{
       type: 'integer'
     },
+    precioLokompro:{
+      type: 'integer'
+    },
+    precioArley:{
+      type: 'integer'
+    },
     estado:{
       type: 'integer',
       defaultsTo: 0 // 0 activo 1 eliminado
