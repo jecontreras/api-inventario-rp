@@ -31,7 +31,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
     data.valorTotal = parseFloat( ( puntoAnt.valorTotal || 0 ) ) + parseFloat( data.valor );
  }else if( data.tipoEntrada === 3 ){
     data.valorAnterior = puntoAnt.valorTotal;
-    data.tipoEntrada = 2;
+    data.tipoEntrada = 0;
     data.valorTotal = data.valor;
  }else{
     data.valorAnterior = puntoAnt.valorTotal;

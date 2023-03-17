@@ -74,7 +74,7 @@
  Procedures.asentar = async( req, res )=>{
     let params = req.allParams();
     let result = Object();
-    result = await Inventario.findOne( { id: params.id } );
+    result = await Inventario.findOne( { id: params.id, asentado: false } );
     if( !result ) return res.status( 200 ).send( { status: 400, data: "Problemas no encontramos el inventario"} );
     params.listArticulo = await InventarioEntrada.find( { where: { estado: 0, inventario: params.id } } ).populate( "articulo" ).populate( "articuloTalla" );
     console.log("****79", params.listArticulo)
@@ -87,8 +87,8 @@
             inventario: result.id
         });
     }
-    await Inventario.update( {id: params.id }, { asentado:true, fechaEmpalme: new moment().format("DD/MM/YYYY, h:mm:ss a")} );
-    return res.status( 200 ).send( { status: 200, data: "Ok"} );
+    resultado = await Inventario.update( {id: params.id }, { asentado:true, fechaEmpalme: new moment().format("DD/MM/YYYY, h:mm:ss a")} ).fetch();
+    return res.status( 200 ).send( { status: 200, data: resultado} );
  }
 
 
