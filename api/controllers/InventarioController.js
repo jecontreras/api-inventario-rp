@@ -77,7 +77,6 @@
     result = await Inventario.findOne( { id: params.id, asentado: false } );
     if( !result ) return res.status( 200 ).send( { status: 400, data: "Problemas no encontramos el inventario"} );
     params.listArticulo = await InventarioEntrada.find( { where: { estado: 0, inventario: params.id } } ).populate( "articulo" ).populate( "articuloTalla" );
-    console.log("****79", params.listArticulo)
     for( let row of params.listArticulo ){
         await Procedures.CantidadesDs({
             valor: row.cantidadIngresar,
@@ -99,10 +98,9 @@
         articuloTalla: data.articuloTalla.id,
         user: data.user,
         descripcion: data.descripcion,
-        inventario: data.id
+        inventario: data.inventario
       };
-      console.log("****103", datas )
-      if (!datas.user || !datas.valor) return "Erro en los parametros";
+      //console.log("****103", datas )
       let finix = await PuntosService.validandoEntrada(datas);
       //console.log("******", finix )
       if( !finix ) return false;

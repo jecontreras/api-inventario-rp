@@ -22,7 +22,7 @@ Procedures.validandoEntrada = async( data, opt )=>{
  let resultado = Object();
  let puntoAnt = await Procedures.getPunto( { articuloTalla: data.articuloTalla } );
  if( puntoAnt == false ) puntoAnt = { ordenando:0, valorTotal: 0 };
- if( !data.valor ) return { status: 400, data: "Error en el valor entrante undefined" };
+ if( !data.valor && data.tipoEntrada !== 3 ) return { status: 400, data: "Error en el valor entrante undefined" };
  //data.valor = data.valor - 10;
  //console.log("***27datas", data );
  if( data.tipoEntrada === 0 ) {
