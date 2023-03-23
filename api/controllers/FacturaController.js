@@ -9,6 +9,15 @@
  const moment = require('moment');
 
  let Procedures = Object();
+ Procedures.getSimple = async( req, res )=>{
+  let params = req.allParams();
+     let resultado = Object();
+     resultado = await QuerysServices(Factura, params);
+     for(let row of resultado.data ){
+        if( row.provedor ) row.provedor = await Provedor.findOne( { where: { id: row.provedor } } );
+     }
+     return res.ok(resultado);
+ }
  Procedures.querys = async (req, res)=>{
      let params = req.allParams();
      let resultado = Object();
@@ -69,6 +78,7 @@
     resultado = await Factura.update( { id: data.id }, data ).fetch();
     resultado = resultado[0];
     //console.log("************68", resultado)
+
     for( let row of parametros.listArticulo || [] ){
 
         if( row.id && row.eliminado == false ) {
@@ -90,7 +100,14 @@
               entrada = 0;
             }
             console.log( "91******", texto, "****",cantidad, "****",entrada)
-            if( cantidad >= 1 ) await Procedures.CantidadesDs( { valor: cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id, descripcion: texto, asentado: true } );
+            if( cantidad >= 1 ) {
+              /*let disabledOff = true;
+              if( entrada === 1 ){
+                const validate = await Procedures.nextValidador( row );
+                //if( validate.)------------------------------
+              }*/
+              await Procedures.CantidadesDs( { valor: cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id, descripcion: texto, asentado: true } );
+            }
             await LogsServices.createLog( { txt: `Factura ya asentado y fue editada ${ resultado.codigo } Modificacion de la cantidad ${ row.cantidadSelect } del articulo ${ row.codigo }`} );
           }else await LogsServices.createLog( { txt: `Factura editada ${ resultado.codigo } Modificacion de la cantidad ${ row.cantidadSelect } del articulo ${ row.codigo }`} );
           await Procedures.updateFacturaArticulo( { id: row.id, cantidad: row.cantidadSelect } );
@@ -120,6 +137,21 @@
     }
     return res.status(200).send( { status:200, data: parametros } );
  }
+
+ Procedures.nextValidador = async( row )=>{
+  let listError = [];
+  let populateTalla = await ArticuloTalla.findOne( { id: row.articuloTalla.id } );
+  let populateColor = await ArticuloColor.findOne( { id: row.articuloColor.id } );
+  if( populateTalla.cantidad < row.cantidadSelect ) listError.push( { articulo: row.articulo.id, data: "Error No tienes suficiente cantidad inventario!!"+ " color " + populateColor.color  + " Talla " + populateTalla.talla + " Cantidad requerida: " + row.cantidadSelect + " Cantidad Inventario " + populateTalla.cantidad  } );
+  if( listError.length === 0 ) return {
+    estatus: true,
+    data: listError
+  }
+  else return {
+      estatus: false,
+      data: listError
+  };
+}
 
  Procedures.updateFacturaArticulo = async( data )=>{
     return FacturaArticulo.update( { id: data.id }, data );
@@ -176,7 +208,7 @@
         let populateColor = await ArticuloColor.findOne( { id: row.articuloColor } );
         if( populateTalla.cantidad < row.cantidad ) listError.push( { articulo: row.articulo, data: "Error No tienes suficiente cantidad inventario!!"+ " color " + populateColor.color  + " Talla " + populateTalla.talla + " Cantidad requerida: " + row.cantidad + " Cantidad Inventario " + populateTalla.cantidad  } );
     }
-    if( listError.length == 0 ) return {
+    if( listError.length === 0 ) return {
         estatus: true,
         data: listError
     }
@@ -185,7 +217,6 @@
         data: listError
     };
  }
-
 
  Procedures.createFactura = async( data )=>{
     return await Factura.create( data ).fetch();

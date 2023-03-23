@@ -51,7 +51,7 @@ module.exports.datastores = {
     // adapter: 'sails-mysql',
     // url: 'mysql://user:password@host:port/database',
     adapter: 'sails-mongo',
-    url: "mongodb://jose147:98090871986@ac-t9jgzc9-shard-00-00.h2jgodv.mongodb.net:27017,ac-t9jgzc9-shard-00-01.h2jgodv.mongodb.net:27017,ac-t9jgzc9-shard-00-02.h2jgodv.mongodb.net:27017/iventariocrm?ssl=true&replicaSet=atlas-12cf5b-shard-0&authSource=admin&retryWrites=true&w=majority",
+    url: "mongodb://jose147:98090871986@ac-iomua28-shard-00-00.tkeuqas.mongodb.net:27017,ac-iomua28-shard-00-01.tkeuqas.mongodb.net:27017,ac-iomua28-shard-00-02.tkeuqas.mongodb.net:27017/?ssl=true&replicaSet=atlas-ozobsv-shard-0&authSource=admin&retryWrites=true&w=majority",
     ssl: true
     /*host: 'localhost',
     user: 'root',

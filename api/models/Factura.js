@@ -73,6 +73,9 @@ module.exports = {
     },
     expiration:{
       type: 'string'
+    },
+    colorP:{
+      type: 'string'
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
