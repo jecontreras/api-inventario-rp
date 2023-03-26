@@ -80,7 +80,7 @@
     //console.log("************68", resultado)
 
     for( let row of parametros.listArticulo || [] ){
-
+      let disabledOff = true;
         if( row.id && row.eliminado == false ) {
           if( resultado.asentado == true ){
 
@@ -101,16 +101,18 @@
             }
             console.log( "91******", texto, "****",cantidad, "****",entrada)
             if( cantidad >= 1 ) {
-              /*let disabledOff = true;
               if( entrada === 1 ){
                 const validate = await Procedures.nextValidador( row );
-                //if( validate.)------------------------------
-              }*/
-              await Procedures.CantidadesDs( { valor: cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id, descripcion: texto, asentado: true } );
+                if( validate.estatus === false ) disabledOff = false;
+              }
+              if( disabledOff === true ) {
+                console.log("****NO ENTRE!!!!!!", disabledOff)
+                await Procedures.CantidadesDs( { valor: cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id, descripcion: texto, asentado: true } );
+                await LogsServices.createLog( { txt: `Factura ya asentado y fue editada ${ resultado.codigo } Modificacion de la cantidad ${ row.cantidadSelect } del articulo ${ row.codigo }`} );
+              }
             }
-            await LogsServices.createLog( { txt: `Factura ya asentado y fue editada ${ resultado.codigo } Modificacion de la cantidad ${ row.cantidadSelect } del articulo ${ row.codigo }`} );
           }else await LogsServices.createLog( { txt: `Factura editada ${ resultado.codigo } Modificacion de la cantidad ${ row.cantidadSelect } del articulo ${ row.codigo }`} );
-          await Procedures.updateFacturaArticulo( { id: row.id, cantidad: row.cantidadSelect } );
+          if( disabledOff == true ) await Procedures.updateFacturaArticulo( { id: row.id, cantidad: row.cantidadSelect } );
         }
         if( row.eliminado == true ) {
           if( resultado.asentado == true ){
@@ -125,13 +127,19 @@
             row.factura = resultado.id;
             row.cantidad = row.cantidadSelect;
             row.estado = resultado.estado;
-            const off = await Procedures.createArticuloFactura( row );
-            //console.log("****OFFF109", off, "....", row)
-            if( resultado.asentado == true && off ){
-              let entrada = 1;
-              let texto = "Saliendo articulo de factura ya asentada";
-              let cantidad = row.cantidadSelect;
-              await Procedures.CantidadesDs( { valor: cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id || row.articuloTalla, descripcion: texto, asentado: true } );
+            if( resultado.asentado === true ){
+              const validate = await Procedures.nextValidador( row );
+              if( validate.estatus === false ) disabledOff = false;
+            }
+            if( disabledOff === true ){
+              const off = await Procedures.createArticuloFactura( row );
+              //console.log("****OFFF109", off, "....", row)
+              if( resultado.asentado == true && off ){
+                let entrada = 1;
+                let texto = "Saliendo articulo de factura ya asentada";
+                let cantidad = row.cantidadSelect;
+                await Procedures.CantidadesDs( { valor: cantidad, tipoEntrada: entrada, user: resultado.user, articuloTalla: row.articuloTalla.id || row.articuloTalla, descripcion: texto, asentado: true } );
+              }
             }
         }
     }
