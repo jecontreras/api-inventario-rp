@@ -174,7 +174,7 @@
     if( !resultado ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro la factura" } );
 
     let listArticulos = await FacturaArticulo.find( { where: { factura: resultado.id, estado: 0 } } ).limit( 100 );
-    if( params.entrada === 1 || params.entrada === 3 ){
+    if( params.entrada === 1 ){
       let validador = await Procedures.validarCantidades( listArticulos );
 
       if( !validador.estatus ) return res.status( 200 ).send( { status: 400, data: validador.data } );
