@@ -174,7 +174,8 @@
     if( !resultado ) return res.status( 200 ).send( { status: 400, data: "Error no se encontro la factura" } );
 
     let listArticulos = await FacturaArticulo.find( { where: { factura: resultado.id, estado: 0 } } ).limit( 100 );
-    if( params.entrada === 1 ){
+    if( resultado.entrada === 1 ){
+      console.log("***178", listArticulos);
       let validador = await Procedures.validarCantidades( listArticulos );
 
       if( !validador.estatus ) return res.status( 200 ).send( { status: 400, data: validador.data } );
@@ -216,6 +217,7 @@
         let populateColor = await ArticuloColor.findOne( { id: row.articuloColor } );
         if( populateTalla.cantidad < row.cantidad ) listError.push( { articulo: row.articulo, data: "Error No tienes suficiente cantidad inventario!!"+ " color " + populateColor.color  + " Talla " + populateTalla.talla + " Cantidad requerida: " + row.cantidad + " Cantidad Inventario " + populateTalla.cantidad  } );
     }
+    console.log("******220", listError)
     if( listError.length === 0 ) return {
         estatus: true,
         data: listError
