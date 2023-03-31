@@ -17,7 +17,7 @@
       row.listColor = await ArticuloColor.find( { where: { articulo: row.id, estado: 0 } } ).limit(100);
       row.cantidad = 0;
       for( let key of row.listColor ){
-         key.listTalla = await ArticuloTalla.find( { where: { articulo: row.id, listColor: key.id, estado:0 } } ).limit(100);
+         key.listTalla = await ArticuloTalla.find( { where: { articulo: row.id, listColor: key.id, estado:0 },sort: 'talla ASC' } ).limit(100);
          for( let item of key.listTalla ) row.cantidad+=Number( item.cantidad || 0 );
       }
      }

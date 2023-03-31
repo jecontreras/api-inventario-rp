@@ -31,6 +31,7 @@
             contains: params.codigo || ""
           }
         }] } } ).limit( 1000000 );
+    resultado.cantidadTotal = 0; 
     for( let item of resultado.listArticulo ){
         item.cantidad = 0;
         item.listColor = await ArticuloColor.find( { where: { estado: 0, articulo: item.id } } );
@@ -42,13 +43,14 @@
                 ol.cantidadReal = Number( ol.cantidad || 0 );
             }
         }
+        resultado.cantidadTotal+=item.cantidad;
     }
     return res.ok( resultado );
  }
 
  Procedures.getArticulos = async( id )=>{
     let resultado = Array();
-    resultado = await ArticuloTalla.find( { where: { estado: 0, listColor: id } } ).limit( 1000000 );
+    resultado = await ArticuloTalla.find( { where: { estado: 0, listColor: id },sort: 'talla ASC' } ).limit( 1000000 );
     return resultado;
  }
 
