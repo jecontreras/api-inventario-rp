@@ -42,6 +42,7 @@
                 item.cantidad+=Number( ol.cantidad || 0 );
                 ol.cantidadReal = Number( ol.cantidad || 0 );
             }
+            row.listTalla = _.orderBy( row.listTalla, ['cantidad'], ['asc'] );
         }
         resultado.cantidadTotal+=item.cantidad;
     }
