@@ -23,7 +23,7 @@ Procedures.create = async( req, res )=>{
 }
 
 Procedures.createReturnArticle = async( listArticle )=>{
-    const dataFinal = {};
+    let dataFinal = {};
     for( let row of listArticle ){  
         const result = await ReturnArticle.create( {
             title: row.title,
@@ -36,9 +36,9 @@ Procedures.createReturnArticle = async( listArticle )=>{
             user: row.user
         }).fetch();
         const info = await Procedures.createDecisions( result );
-        dataFinal = await info;
+        dataFinal = info;
     }
-    return info;
+    return dataFinal;
 }
 
 Procedures.createDecisions = async( data )=>{
@@ -66,5 +66,24 @@ Procedures.createDecisions = async( data )=>{
     }
     return {data:"completado"};
 }
+
+Procedures.CantidadesDs = async( data )=>{
+    let datas = {
+        valor: data.valor,
+        tipoEntrada: data.tipoEntrada,
+        articuloTalla: data.articuloTalla,
+        user: data.user,
+        descripcion: data.descripcion,
+        asentado: data.asentado
+      };
+      //console.log("****", datas )
+      if (!datas.user || !datas.valor) return "Erro en los parametros";
+      let finix = await PuntosService.validandoEntrada(datas);
+      //console.log("******", finix )
+      if( !finix ) return false;
+      //await Procedures.updateArticuloTalla( { id: datas.articuloTalla, cantidad: finix.valorTotal } );
+      return "ok";
+ }
+
 module.exports = Procedures;
 
