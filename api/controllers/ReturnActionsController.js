@@ -6,61 +6,82 @@
  */
 
 let Procedures = Object();
+const _ = require('lodash');
+
 Procedures.querys = async (req, res)=>{
     let params = req.allParams();
     let resultado = Object();
     resultado = await QuerysServices(ReturnActions, params);
+    for( let row of resultado.data ){
+      row.listReturnArticle = await ReturnArticle.find( { where: { retunrActions: row.id } } ).populate('articleSize').populate('article');
+    }
     return res.ok(resultado);
 }
 
 Procedures.create = async( req, res )=>{
     let params = req.allParams();
+    let clone = _.clone( params );
     let result = Object();
-    result = await ReturnActions.create( params.actions );
+    result = await ReturnActions.create( params.actions ).fetch();
     if( result === false ) return res.status( 400 ).send( { status: 400, data: "Error no podimos crear la devolucion!!" } );
-    result = await Procedures.createReturnArticle( params.listArticle );
+    result = await Procedures.createReturnArticle( clone.listArticle, result );
     return res.status( 200 ).send( { status: 200, data: "completado" } );
 }
 
-Procedures.createReturnArticle = async( listArticle )=>{
-    let dataFinal = {};
-    for( let row of listArticle ){  
+Procedures.handleSettling = async( req, res )=>{
+  let params = req.allParams();
+  let result = Object();
+  result = await ReturnActions.findOne( params.id );
+  if( !result ) return res.status( 400 ).send( { status: 400, data: "Error no encontramos la devolucion!!" } );
+  result = await ReturnArticle.find( { where: { retunrActions: result.id } } ).limit( 100000 );
+  for( let row of result ){
+    const info = await Procedures.createDecisions( row );
+    console.log("****34", info );
+  }
+  await ReturnActions.update( params.id , { asentado: true } );
+  return res.status( 200 ).send( { status: 200, data: "data Completado" } );
+}
+
+Procedures.createReturnArticle = async( listArticle, data )=>{
+    let dataFinal = [];
+    for( let row of listArticle ){
         const result = await ReturnArticle.create( {
             title: row.title,
-            amount: row.amount,
-            coin: row.coin,
+            amount: row.cantidadSelect,
+            coin: row.precioCompra,
             platform: row.platform,
             decisions: row.decisions,
-            article: row.article,
-            articleSize: row.articleSize,
-            user: row.user
+            article: row.articulo,
+            articleSize: row.articuloTalla.id,
+            user: row.user,
+            price: row.precio,
+            retunrActions: data.id
         }).fetch();
-        const info = await Procedures.createDecisions( result );
-        dataFinal = info;
+        dataFinal.push( result );
     }
     return dataFinal;
 }
 
 Procedures.createDecisions = async( data )=>{
     if( data.decisions === 0 ){
-        const result = await Procedures.CantidadesDs( { 
-            valor: data.amount, 
-            tipoEntrada: 0, 
-            user: data.user, 
-            articuloTalla: data.articleSize, 
-            descripcion: "Devolucion desde la area devolucion! id: "+data.id+" title "+ data.title, 
-            asentado: true 
+        const result = await Procedures.CantidadesDs( {
+            valor: data.amount,
+            tipoEntrada: 0,
+            user: data.user,
+            articuloTalla: data.articleSize,
+            descripcion: "Devolucion desde la area devolucion! id: "+data.id+" title "+ data.title,
+            asentado: true
         } );
         return result;
     }
     if( data.decisions === 1 ){
-        const result = await Procedures.CantidadesDs( { 
-            valor: data.amount, 
-            tipoEntrada: 1, 
-            user: data.user, 
-            articuloTalla: data.articleSize, 
-            descripcion: "destrucción del producto desde la area devolucion! id: "+data.id+" title "+ data.title, 
-            asentado: true 
+        const result = await Procedures.CantidadesDs( {
+            valor: data.amount,
+            tipoEntrada: 1,
+            user: data.user,
+            articuloTalla: data.articleSize,
+            descripcion: "destrucción del producto desde la area devolucion! id: "+data.id+" title "+ data.title,
+            asentado: true
         } );
         return result;
     }

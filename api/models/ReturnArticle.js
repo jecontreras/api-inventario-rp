@@ -27,11 +27,15 @@ module.exports = {
     decisions:{
       type: 'integer' // 0 devolver cantidad inventario 1 destruir cantidad del inventario
     },
+    price:{
+      type: 'integer'
+    },
+
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
     //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
     //  ╚═╝╩ ╩╚═╝╚═╝═╩╝╚═╝
-    
-    
+
+
     //  ╔═╗╔═╗╔═╗╔═╗╔═╗╦╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
     //  ╠═╣╚═╗╚═╗║ ║║  ║╠═╣ ║ ║║ ║║║║╚═╗
     //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
@@ -41,10 +45,13 @@ module.exports = {
     articleSize:{
       model: 'articuloTalla'
     },
+    retunrActions:{
+      model: 'returnActions'
+    },
     user:{
       model: 'user'
     }
-    
+
   },
 
 };

@@ -17,7 +17,15 @@ module.exports = {
     },
     descripcion:{
       type: 'string'
-    }
+    },
+    estado:{
+      type: 'integer',
+      defaultsTo: 0 // 0 activo 1 eliminado  3 devolucion
+    },
+    asentado:{
+      type: 'boolean',
+      defaultsTo: false
+    },
 
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
