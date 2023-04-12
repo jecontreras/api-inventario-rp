@@ -24,8 +24,8 @@ Procedures.create = async( req, res )=>{
     let result = Object();
     result = await ReturnActions.create( params.actions ).fetch();
     if( result === false ) return res.status( 400 ).send( { status: 400, data: "Error no podimos crear la devolucion!!" } );
-    result = await Procedures.createReturnArticle( clone.listArticle, result );
-    return res.status( 200 ).send( { status: 200, data: "completado" } );
+    await Procedures.createReturnArticle( clone.listArticle, result );
+    return res.status( 200 ).send( { status: 200, data: result } );
 }
 
 Procedures.handleSettling = async( req, res )=>{
@@ -48,7 +48,7 @@ Procedures.createReturnArticle = async( listArticle, data )=>{
         const result = await ReturnArticle.create( {
             title: row.title,
             amount: row.cantidadSelect,
-            coin: row.precioCompra,
+            coin: row.coin,
             platform: row.platform,
             decisions: row.decisions,
             article: row.articulo,

@@ -50,7 +50,7 @@ module.exports = {
       adapter: 'sails-mongo',
       //url: 'mongodb://jose147:RedLider2022*@ds263307.mlab.com:63307/envios'
       url: "mongodb://jose147:98090871986@ac-t9jgzc9-shard-00-00.h2jgodv.mongodb.net:27017,ac-t9jgzc9-shard-00-01.h2jgodv.mongodb.net:27017,ac-t9jgzc9-shard-00-02.h2jgodv.mongodb.net:27017/iventariocrm?ssl=true&replicaSet=atlas-12cf5b-shard-0&authSource=admin&retryWrites=true&w=majority",
-      ssl: true
+      //ssl: true
       // adapter: 'sails-mysql',
       // url: 'mysql://user:password@host:port/database',
       //--------------------------------------------------------------------------
@@ -167,7 +167,7 @@ module.exports = {
       })(),
       allowCredentials: false,
     },
-  
+
 
   },
 

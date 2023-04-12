@@ -76,6 +76,10 @@ module.exports = {
     },
     colorP:{
       type: 'string'
+    },
+    devolucion:{
+      type: 'integer',
+      defaultsTo: 0  // 0 false 1 true
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗

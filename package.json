@@ -12,12 +12,13 @@
     "jsonwebtoken": "^8.5.1",
     "lidash": "^0.1.3",
     "machinepack-passwords": "^2.3.0",
-    "sails-mongo": "^1.0.1",
     "moment": "^2.29.4",
+    "mongodb": "^2.0.14",
     "sails": "^1.5.2",
     "sails-hook-grunt": "^5.0.0",
     "sails-hook-orm": "^4.0.0",
-    "sails-hook-sockets": "^2.0.0"
+    "sails-hook-sockets": "^2.0.0",
+    "sails-mongo": "^2.0.1"
   },
   "devDependencies": {
     "eslint": "5.16.0"
