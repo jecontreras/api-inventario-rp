@@ -31,12 +31,13 @@ Procedures.create = async( req, res )=>{
 Procedures.handleSettling = async( req, res )=>{
   let params = req.allParams();
   let result = Object();
-  result = await ReturnActions.findOne( params.id );
+  result = await ReturnActions.findOne( { id: params.id, asentado: false } );
   if( !result ) return res.status( 400 ).send( { status: 400, data: "Error no encontramos la devolucion!!" } );
-  result = await ReturnArticle.find( { where: { retunrActions: result.id } } ).limit( 100000 );
+  result = await ReturnArticle.find( { where: { retunrActions: result.id, asentado: false } } ).limit( 100000 );
   for( let row of result ){
     const info = await Procedures.createDecisions( row );
     console.log("****34", info );
+    await ReturnArticle.update( { id: row.id }, { asentado: true } );
   }
   await ReturnActions.update( params.id , { asentado: true } );
   return res.status( 200 ).send( { status: 200, data: "data Completado" } );
@@ -104,7 +105,13 @@ Procedures.CantidadesDs = async( data )=>{
       if( !finix ) return false;
       //await Procedures.updateArticuloTalla( { id: datas.articuloTalla, cantidad: finix.valorTotal } );
       return "ok";
- }
+}
+
+/*Procedures.update = async( req, res )=>{
+  let params = req.allParams();
+  let result = Object();
+
+}*/
 
 module.exports = Procedures;
 

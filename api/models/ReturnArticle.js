@@ -50,7 +50,11 @@ module.exports = {
     },
     user:{
       model: 'user'
-    }
+    },
+    asentado:{
+      type: 'boolean',
+      defaultsTo: false
+    },
 
   },
 
