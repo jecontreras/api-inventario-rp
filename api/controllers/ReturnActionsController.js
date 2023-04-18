@@ -136,7 +136,7 @@ Procedures.orderComplete = async( req, res )=>{
   for( let row of dataFinix ){
     await Procedures.CantidadesDs( { ...row, valor: row.valorTotal, tipoEntrada: 3 } );
   }
-  //console.log("****FINIX", dataFinix);
+  console.log("****FINIX", dataFinix.length);
   return res.status(200).send({data:"ok"})
 }
 
