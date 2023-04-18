@@ -89,22 +89,73 @@ Procedures.createDecisions = async( data )=>{
     return {data:"completado"};
 }
 
+Procedures.order = async( req, res )=>{
+
+  let params = req.allParams();
+  let result = Object();
+  let id = { where: { retunrActions: '643daf867d18640014232b7f'} };
+  result = await ReturnArticle.find( id ).limit(10000000)
+  //console.log("***114", result, id )
+  for( let row of result ){
+    let urlTxt = `Devolucion desde la area devolucion! id: ${ row.id } title `;
+    let miData = await ArticuloLog.find( { where: { descripcion: urlTxt }, sort: "ordenando ASC" } ).limit( 10000000 );
+    for (let i = 0; i < miData.length; i++) {
+      if( i === 0 ) continue;
+      await ArticuloLog.update( { id: miData[i].id }, { estado: 1 } );
+    }
+    console.log("******117", miData, urlTxt);
+
+  }
+  res.status(200).send({ data: "OK+"})
+}
+
+Procedures.orderComplete = async( req, res )=>{
+  let params = req.allParams();
+  let result = Object();
+
+  result = await ArticuloLog.find( { where: { estado: 0 }, sort: "ordenando ASC" } ).limit(1000000);
+  let dataFinix = [];
+  console.log("****136", result.length)
+  for (let item = 0; item < result.length; item++) {
+    const element = result[item];
+    let filtro = _.findIndex( dataFinix, [ 'articuloTalla', element.articuloTalla ] );
+    if( filtro === -1 ) dataFinix.push( { descripcion: "modificacion forzada 1", valor: element.valor, valorAnterior:0, valorTotal: element.valor, articuloTalla: element.articuloTalla, articuloLogDetallado:element.articuloLogDetallado,
+      user: element.user, tipoEntrada: element.tipoEntrada, asentado: true
+    } );
+    else {
+      if( element.tipoEntrada == 0 ){
+        dataFinix[filtro].valorTotal+= element.valor;
+      }
+      else{
+        console.log("***RESET", element.valor, "Total", element.valorTotal, "anterior", element.valorAnterior,
+        "Valor new", dataFinix[filtro] );
+        dataFinix[filtro].valorTotal= Number( dataFinix[filtro].valorTotal - element.valor ) || 0;
+      }
+    }
+  }
+  for( let row of dataFinix ){
+    await Procedures.CantidadesDs( { ...row, valor: row.valorTotal, tipoEntrada: 3 } );
+  }
+  //console.log("****FINIX", dataFinix);
+  return res.status(200).send({data:"ok"})
+}
+
 Procedures.CantidadesDs = async( data )=>{
-    let datas = {
-        valor: data.valor,
-        tipoEntrada: data.tipoEntrada,
-        articuloTalla: data.articuloTalla,
-        user: data.user,
-        descripcion: data.descripcion,
-        asentado: data.asentado
-      };
-      //console.log("****", datas )
-      if (!datas.user || !datas.valor) return "Erro en los parametros";
-      let finix = await PuntosService.validandoEntrada(datas);
-      //console.log("******", finix )
-      if( !finix ) return false;
-      //await Procedures.updateArticuloTalla( { id: datas.articuloTalla, cantidad: finix.valorTotal } );
-      return "ok";
+  let datas = {
+      valor: data.valor,
+      tipoEntrada: data.tipoEntrada,
+      articuloTalla: data.articuloTalla,
+      user: data.user,
+      descripcion: data.descripcion,
+      asentado: data.asentado
+    };
+    //console.log("****", datas )
+    if (!datas.user || !datas.valor) return "Erro en los parametros";
+    let finix = await PuntosService.validandoEntrada(datas);
+    //console.log("******", finix )
+    if( !finix ) return false;
+    //await Procedures.updateArticuloTalla( { id: datas.articuloTalla, cantidad: finix.valorTotal } );
+    return "ok";
 }
 
 /*Procedures.update = async( req, res )=>{
