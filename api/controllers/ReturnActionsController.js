@@ -138,7 +138,7 @@ Procedures.orderComplete = async( req, res )=>{
   /*for( let row of dataFinix ){
     await Procedures.CantidadesDs( { ...row, valor: row.valor, valorTotal: row.valorTotal, tipoEntrada: 3, valorAnterior:  row.valorAnterior } );
   }*/
-  result = await ArticuloLogDetallado.find( { where: { /*id: "64273efa773ade001449fe8e"*/, estado: 0 } } )
+  result = await ArticuloLogDetallado.find( { where: { /*id: "64273efa773ade001449fe8e"*/estado: 0 } } )
   for (let item = 0; item < result.length; item++) {
     const element = result[item];
     let JSONDATA = await ArticuloLog.find( { where: { articuloLogDetallado: element.id,  estado: 0 }, sort: "ordenando ASC" } );
