@@ -186,7 +186,7 @@ Procedures.orderComplete = async( req, res )=>{
 Procedures.definita = async( req, res )=>{
   let params = req.allParams();
   let result = Object();
-  result = await ArticuloLogDetallado.find( { where: { estado: 0 } } ).limit(1);
+  result = await ArticuloLogDetallado.find( { where: { estado: 0 } } );
   for( let row of result ){
     //console.log("****row", row);
     let dto = ( await ArticuloLog.find( { where: { articuloLogDetallado: row.id, estado: 0 }, sort: "ordenando DESC" } ).limit(1) )[0];
