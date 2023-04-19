@@ -138,18 +138,18 @@ Procedures.orderComplete = async( req, res )=>{
   /*for( let row of dataFinix ){
     await Procedures.CantidadesDs( { ...row, valor: row.valor, valorTotal: row.valorTotal, tipoEntrada: 3, valorAnterior:  row.valorAnterior } );
   }*/
-  result = await ArticuloLogDetallado.find( { where: { /*id: "64273efa773ade001449fe8e"*/estado: 0 } } )
+  result = await ArticuloLogDetallado.find( { where: { /*id: "64236f29d4de390014c9dd14",*/estado: 0 } } )
   for (let item = 0; item < result.length; item++) {
     const element = result[item];
     let JSONDATA = await ArticuloLog.find( { where: { articuloLogDetallado: element.id,  estado: 0 }, sort: "ordenando ASC" } );
     for (let e = 0; e < JSONDATA.length; e++) {
       const key = JSONDATA[e];
       if( e === 0 ){
-        dataFinix.push( key );
+        dataFinix.push( {...key, valorAnterior: 0, valorTotal: key.valor } );
       }else{
         let format = {
           ...key,
-          valorAnterior: JSONDATA[e-1].valorTotal,
+          valorAnterior: dataFinix[e-1].valorTotal,
           valorTotal: 0
         };
         if( key.tipoEntrada == 0 ){
@@ -159,6 +159,7 @@ Procedures.orderComplete = async( req, res )=>{
           if( format.valorTotal <= 0 ) format.valorTotal = 0;
         }
         if( key.descripcion === 'Asentando iventario manual'){
+          console.log("*****162")
           format.valorTotal = format.valor;
         }
         dataFinix.push( format );
