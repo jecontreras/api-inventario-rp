@@ -192,6 +192,7 @@ Procedures.definita = async( req, res )=>{
     if( dto ) {
       console.log("****193 valor anterior",dto.valorAnterior,"valor ", dto.valor, "valor total", dto.valorTotal, "id", dto );
       await ArticuloLogDetallado.update( { id: dto.id }, { valorAnterior: dto.valorAnterior, valor:dto.valor, valorTotal: dto.valorTotal, tipoEntrada: dto.tipoEntrada  } );}
+      await articuloTalla.update( { id: row.articuloTalla }, { cantidad: dto.valorTotal })
   }
   res.status(200).send({data:"ok"})
 }
