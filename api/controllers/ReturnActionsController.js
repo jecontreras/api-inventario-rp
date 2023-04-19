@@ -186,13 +186,14 @@ Procedures.orderComplete = async( req, res )=>{
 Procedures.definita = async( req, res )=>{
   let params = req.allParams();
   let result = Object();
-  result = await ArticuloLogDetallado.find( { where: { estado: 0 } } );
+  result = await ArticuloLogDetallado.find( { where: { estado: 0 } } ).limit(1);
   for( let row of result ){
+    //console.log("****row", row);
     let dto = ( await ArticuloLog.find( { where: { articuloLogDetallado: row.id, estado: 0 }, sort: "ordenando DESC" } ).limit(1) )[0];
     if( dto ) {
       console.log("****193 valor anterior",dto.valorAnterior,"valor ", dto.valor, "valor total", dto.valorTotal, "id", dto );
       await ArticuloLogDetallado.update( { id: dto.id }, { valorAnterior: dto.valorAnterior, valor:dto.valor, valorTotal: dto.valorTotal, tipoEntrada: dto.tipoEntrada  } );}
-      await articuloTalla.update( { id: row.articuloTalla }, { cantidad: dto.valorTotal })
+      await ArticuloTalla.update( { id: row.articuloTalla }, { cantidad: dto.valorTotal })
   }
   res.status(200).send({data:"ok"})
 }
