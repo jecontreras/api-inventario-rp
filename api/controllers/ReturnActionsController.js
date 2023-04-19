@@ -112,8 +112,8 @@ Procedures.order = async( req, res )=>{
 Procedures.orderComplete = async( req, res )=>{
   let params = req.allParams();
   let result = Object();
-
-  result = await ArticuloLog.find( { where: { estado: 0 }, sort: "ordenando ASC" } ).limit(1000000);
+  let dataFinix = [];
+  /*result = await ArticuloLog.find( { where: { estado: 0 }, sort: "ordenando ASC" } ).limit(1000000);
   let dataFinix = [];
   console.log("****136", result.length)
   for (let item = 0; item < result.length; item++) {
@@ -134,12 +134,37 @@ Procedures.orderComplete = async( req, res )=>{
         dataFinix[filtro].valorTotal= Number( dataFinix[filtro].valorTotal - element.valor ) || 0;
       }
     }
-  }
-  for( let row of dataFinix ){
+  }*/
+  /*for( let row of dataFinix ){
     await Procedures.CantidadesDs( { ...row, valor: row.valor, valorTotal: row.valorTotal, tipoEntrada: 3, valorAnterior:  row.valorAnterior } );
-  }
+  }*/
+  result = await ArticuloLogDetallado.find( { where: { estado: 0 } } )
+  for (let item = 0; item < result.length; item++) {
+    const element = result[item];
+    let JSONDATA = await ArticuloLog.find( { where: { articuloLogDetallado: element.id,  estado: 0 }, sort: "ordenando ASC" } );
+    for (let e = 0; e < JSONDATA.length; e++) {
+      const key = JSONDATA[e];
+      if( e === 0 ){
+        dataFinix.push( key );
+      }else{
+        let format = {
+          ...key,
+          valorAnterior: JSONDATA[e-1].valorTotal,
+          valorTotal: 0
+        };
+        if( key.tipoEntrada == 0 ){
+          format.valorTotal = key.valor + format.valorAnterior;
+        }else{
+          format.valorTotal = format.valorAnterior - key.valor;
+        }
+        dataFinix.push( format );
+      }
+
+      }
+
+    }
   console.log("****FINIX", dataFinix.length);
-  return res.status(200).send({data:"ok"})
+  return res.status(200).send({data:dataFinix})
 }
 
 Procedures.CantidadesDs = async( data )=>{
