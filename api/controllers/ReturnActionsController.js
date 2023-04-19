@@ -119,12 +119,13 @@ Procedures.orderComplete = async( req, res )=>{
   for (let item = 0; item < result.length; item++) {
     const element = result[item];
     let filtro = _.findIndex( dataFinix, [ 'articuloTalla', element.articuloTalla ] );
-    if( filtro === -1 ) dataFinix.push( { descripcion: "modificacion forzada 1", valor: 0, valorAnterior:0, valorTotal: element.valor, articuloTalla: element.articuloTalla, articuloLogDetallado:element.articuloLogDetallado,
+    if( filtro === -1 ) dataFinix.push( { descripcion: "modificacion forzada 1", valor: element.valor, valorAnterior:0, valorTotal: element.valor, articuloTalla: element.articuloTalla, articuloLogDetallado:element.articuloLogDetallado,
       user: element.user, tipoEntrada: 0, asentado: true
     } );
     else {
       if( element.tipoEntrada == 0 ){
         dataFinix[filtro].valorTotal+= element.valor;
+        dataFinix[filtro].valor= element.valor;
       }
       else{
         console.log("***RESET", element.valor, "Total", element.valorTotal, "anterior", element.valorAnterior,
@@ -134,7 +135,7 @@ Procedures.orderComplete = async( req, res )=>{
     }
   }
   for( let row of dataFinix ){
-    await Procedures.CantidadesDs( { ...row, valor: 0, valorTotal: row.valorTotal, tipoEntrada: 3 } );
+    await Procedures.CantidadesDs( { ...row, valor: row.valor, valorTotal: row.valorTotal, tipoEntrada: 3 } );
   }
   console.log("****FINIX", dataFinix.length);
   return res.status(200).send({data:"ok"})
