@@ -183,6 +183,19 @@ Procedures.orderComplete = async( req, res )=>{
   console.log("****FINIX", dataFinix.length);
 }
 
+Procedures.definita = async( req, res )=>{
+  let params = req.allParams();
+  let result = Object();
+  result = await ArticuloLogDetallado.find( { where: { estado: 0 } } );
+  for( let row of result ){
+    let dto = ( await ArticuloLog.find( { where: { articuloLogDetallado: row.id, estado: 0 }, sort: "ordenando DESC" } ).limit(1) )[0];
+    if( dto ) {
+      console.log("****193 valor anterior",dto.valorAnterior,"valor ", dto.valor, "valor total", dto.valorTotal, "id", dto );
+      await ArticuloLogDetallado.update( { id: dto.id }, { valorAnterior: dto.valorAnterior, valor:dto.valor, valorTotal: dto.valorTotal, tipoEntrada: dto.tipoEntrada  } );}
+  }
+  res.status(200).send({data:"ok"})
+}
+
 Procedures.CantidadesDs = async( data )=>{
   let datas = {
       valor: data.valor,
