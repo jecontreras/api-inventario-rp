@@ -167,7 +167,7 @@ Procedures.orderComplete = async( req, res )=>{
 
       }
       for (let off = 0; off < dataFinix.length; off++) {
-        const row = array[off];
+        const row = dataFinix[off];
         let rm = await ArticuloLog.update( { id: row.id }, row ).fetch();
         if( ( off+1 ) >= dataFinix.length ){
           console.log("**ENTRE ADD TODO")
