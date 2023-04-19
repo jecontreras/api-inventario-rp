@@ -165,7 +165,10 @@ Procedures.orderComplete = async( req, res )=>{
     }
     for( let row of dataFinix ){
       await ArticuloLog.update( { id: row.id }, row );
-      await ArticuloLogDetallado.update({ articuloLog: row.articuloLogDetallado },  { valor: row.valor, valorAnterior: row.valorAnterior, valorTotal: row.valorTotal, tipoEntrada: row.tipoEntrada })
+      console.log("***", row)
+      let filter = await ArticuloLogDetallado.findOne( { articuloLog: String( row.articuloLogDetallado ) } );
+      console.log("***MODIF", filter.id )
+      if( filter ) await ArticuloLogDetallado.update({ id: filter.id },  { valor: row.valor, valorAnterior: row.valorAnterior, valorTotal: row.valorTotal, tipoEntrada: row.tipoEntrada })
     }
   console.log("****FINIX", dataFinix.length);
   return res.status(200).send({data:dataFinix})
