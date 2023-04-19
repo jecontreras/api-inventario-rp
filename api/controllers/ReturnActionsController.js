@@ -163,6 +163,7 @@ Procedures.orderComplete = async( req, res )=>{
       }
 
     }
+    res.status(200).send({data:dataFinix})
     for( let row of dataFinix ){
       await ArticuloLog.update( { id: row.id }, row );
       console.log("***", row)
@@ -171,7 +172,6 @@ Procedures.orderComplete = async( req, res )=>{
       if( filter ) await ArticuloLogDetallado.update({ id: filter.id },  { valor: row.valor, valorAnterior: row.valorAnterior, valorTotal: row.valorTotal, tipoEntrada: row.tipoEntrada })
     }
   console.log("****FINIX", dataFinix.length);
-  return res.status(200).send({data:dataFinix})
 }
 
 Procedures.CantidadesDs = async( data )=>{
