@@ -150,7 +150,7 @@ Procedures.CantidadesDs = async( data )=>{
       asentado: data.asentado
     };
     //console.log("****", datas )
-    if (!datas.user || !datas.valor) return "Erro en los parametros";
+    //if (!datas.user || !datas.valor) return "Erro en los parametros";
     let finix = await PuntosService.validandoEntrada(datas);
     //console.log("******", finix )
     if( !finix ) return false;
