@@ -138,7 +138,7 @@ Procedures.orderComplete = async( req, res )=>{
   /*for( let row of dataFinix ){
     await Procedures.CantidadesDs( { ...row, valor: row.valor, valorTotal: row.valorTotal, tipoEntrada: 3, valorAnterior:  row.valorAnterior } );
   }*/
-  result = await ArticuloLogDetallado.find( { where: { estado: 0 } } )
+  result = await ArticuloLogDetallado.find( { where: { id: "64273efa773ade001449fe8e", estado: 0 } } )
   for (let item = 0; item < result.length; item++) {
     const element = result[item];
     let JSONDATA = await ArticuloLog.find( { where: { articuloLogDetallado: element.id,  estado: 0 }, sort: "ordenando ASC" } );
@@ -155,7 +155,8 @@ Procedures.orderComplete = async( req, res )=>{
         if( key.tipoEntrada == 0 ){
           format.valorTotal = key.valor + format.valorAnterior;
         }else{
-          format.valorTotal = format.valorAnterior - key.valor;
+          format.valorTotal = ( format.valorAnterior - key.valor ) || 0 ;
+          if( format.valorTotal <= 0 ) format.valorTotal = 0;
         }
         dataFinix.push( format );
       }
@@ -165,8 +166,8 @@ Procedures.orderComplete = async( req, res )=>{
     }
     res.status(200).send({data:dataFinix})
     for( let row of dataFinix ){
-      await ArticuloLog.update( { id: row.id }, row );
-      console.log("***", row)
+      let rm = await ArticuloLog.update( { id: row.id }, row ).fetch();
+      console.log("***", row, rm)
       let filter = await ArticuloLogDetallado.findOne( { articuloLog: String( row.articuloLogDetallado ) } );
       console.log("***MODIF", filter.id )
       if( filter ) await ArticuloLogDetallado.update({ id: filter.id },  { valor: row.valor, valorAnterior: row.valorAnterior, valorTotal: row.valorTotal, tipoEntrada: row.tipoEntrada })
