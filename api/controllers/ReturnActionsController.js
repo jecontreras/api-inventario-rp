@@ -137,7 +137,7 @@ Procedures.orderComplete = async( req, res )=>{
   /*for( let row of dataFinix ){
     await Procedures.CantidadesDs( { ...row, valor: row.valor, valorTotal: row.valorTotal, tipoEntrada: 3, valorAnterior:  row.valorAnterior } );
   }*/
-  result = await ArticuloLogDetallado.find( { where: { id: "642372e8d4de390014c9ddbc",estado: 0 } } )
+  result = await ArticuloLogDetallado.find( { where: { /*id: "642372e8d4de390014c9ddbc",*/estado: 0 } } )
   let dataFinix = [];
   for (let item = 0; item < result.length; item++) {
     const element = result[item];
@@ -167,7 +167,7 @@ Procedures.orderComplete = async( req, res )=>{
 
       }
       for (let off = 0; off < dataFinix.length; off++) {
-        const row = dataFinix[off];
+        const row = array[off];
         let rm = await ArticuloLog.update( { id: row.id }, row ).fetch();
         if( ( off+1 ) >= dataFinix.length ){
           console.log("**ENTRE ADD TODO")
