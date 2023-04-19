@@ -158,6 +158,9 @@ Procedures.orderComplete = async( req, res )=>{
           format.valorTotal = ( format.valorAnterior - key.valor ) || 0 ;
           if( format.valorTotal <= 0 ) format.valorTotal = 0;
         }
+        if( key.descripcion === 'Asentando iventario manual'){
+          format.valorTotal = format.valor;
+        }
         dataFinix.push( format );
       }
 
