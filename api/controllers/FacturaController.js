@@ -15,6 +15,7 @@
      resultado = await QuerysServices(Factura, params);
      for(let row of resultado.data ){
         if( row.provedor ) row.provedor = await Provedor.findOne( { where: { id: row.provedor } } );
+        row.itemPeers = _.sumBy( ( await FacturaArticulo.find( { where: { factura: row.id, estado: 0 } } ) ), 'cantidad' );
      }
      return res.ok(resultado);
  }
@@ -57,6 +58,7 @@
     let params = req.allParams();
     let clone = req.allParams();
     let resultado = Object();
+    Procedures.validateClient( params.factura );
     resultado = await Procedures.createFactura( params.factura );
     params.id = resultado.id;
     let result = Object();
@@ -68,6 +70,14 @@
         //console.log("***", row)
     }
     return res.status(200).send( { status:200, data: params } );
+ }
+
+ Procedures.validateClient = async( data )=>{
+  let resultado = Object();
+  resultado = await Clientes.findOne( { nombre: data.nombreCliente } );
+  if( resultado ) return resultado;
+  else return await Clientes.create( { nombre: data.nombreCliente } );
+
  }
 
  Procedures.update = async( req, res )=>{
