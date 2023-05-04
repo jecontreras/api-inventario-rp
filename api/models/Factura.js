@@ -79,7 +79,13 @@ module.exports = {
     },
     devolucion:{
       type: 'integer',
-      defaultsTo: 0  // 0 false 1 true
+      defaultsTo: 0  // 0 false 1 cambio / 2 garantia
+    },
+    priceFleteEntrada:{
+      type: 'integer',
+    },
+    priceFleteSalida:{
+      type: 'integer',
     }
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
