@@ -141,9 +141,11 @@
               const validate = await Procedures.nextValidador( row );
               if( validate.estatus === false ) disabledOff = false;
             }
+            console.log("********144", disabledOff)
             if( disabledOff === true ){
               const off = await Procedures.createArticuloFactura( row );
-              //console.log("****OFFF109", off, "....", row)
+              row.id = off.id;
+              console.log("****OFFF109", off, "....", row)
               if( resultado.asentado == true && off ){
                 let entrada = 1;
                 let texto = "Saliendo articulo de factura ya asentada";
