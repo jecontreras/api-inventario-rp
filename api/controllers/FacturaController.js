@@ -141,6 +141,7 @@
               const validate = await Procedures.nextValidador( row );
               if( validate.estatus === false ) disabledOff = false;
             }
+            console.log("********144", disabledOff)
             if( disabledOff === true ){
               const off = await Procedures.createArticuloFactura( row );
               row.id = off.id;
