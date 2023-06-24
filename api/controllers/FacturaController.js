@@ -143,6 +143,7 @@
             }
             if( disabledOff === true ){
               const off = await Procedures.createArticuloFactura( row );
+              row.id = off.id;
               //console.log("****OFFF109", off, "....", row)
               if( resultado.asentado == true && off ){
                 let entrada = 1;
