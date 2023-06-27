@@ -39,11 +39,12 @@ module.exports.tarea = async function() {
     cron.AgregarTarea(tarea)
 
     async function iniciador(){
-        await EstadoguiaServices.init( );
+        //await EstadoguiaServices.init( );
+        await Cache.loadDBS('factura');
+        await Cache.loadDBS('facturaArticulo');
+        await Cache.loadDBS('articuloTalla');
+        await Cache.loadDBS('articulo');
     }
-    /*setTimeout(async() => {
-      await LogsServices.automaticBill();
-    }, 3000);*/
-    //iniciador();
+    iniciador();
     cron.iniciar();
 }

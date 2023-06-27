@@ -10,9 +10,9 @@
  const moment = require('moment');
  let Procedures = Object();
  var jwt = require('jsonwebtoken');
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- 
+
  Procedures.creacionTokens = async( data )=>{
   let tokenData = {
     username: data.usu_email,
@@ -20,14 +20,14 @@
   };
   return new Promise( async( resolve ) => {
     let token = jwt.sign( tokenData, 'Secret Password', { expiresIn: 60 * 60 * 24 /*expires in 24 hours */ });
-    await Cache.guardar( { user: data.id, rol: data.usu_perfil, tokens: token } );
+    await Cache.guardar( { user: data.id, rol: data.usu_perfil, tokens: token }, 'logs' );
     return resolve( token );
   })
 }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.register = async(req, res)=>{
- 
+
      let params = req.allParams();
    // sails.log.info(26, params);
    if((params.usu_clave !== params.usu_confir) && (!params.usu_usuario && !params.email && !params.usu_nombre)) return res.ok({status: 400, data: "error en el envio de los datos"});
@@ -51,8 +51,10 @@
    user = await User.create(params).fetch();
    if(!user) return res.badRequest(err);
    user = await User.findOne({id: user.id}).populate('usu_perfil')
-   let tokens = await Procedures.creacionTokens( user );
-   user.tokens = tokens;
+   try {
+    let tokens = await Procedures.creacionTokens( user );
+    user.tokens = tokens;
+   } catch (error) {}
    //let resul = await MensajeService.envios( { subtitulo: "Bienvenido a la plataforma LocomproAqui.com Usuario "+ user.usu_email +"! satisfecho el registro", emails: user.usu_email, creado: "123456", descripcion: "Espero que disfrutes trabajar con nuestra plataforma" });
    let resul = await MensajeService.envios1( user.usu_email , { subtitulo: "Bienvenido a la plataforma LocomproAqui.com Usuario "+ user.usu_usuario +"! satisfecho el registro", emails: user.usu_email, creado: "123456", descripcion: "Espero que disfrutes trabajar con nuestra plataforma" } )
    let result = await Procedures.creacionMensajeNotifi(
@@ -64,7 +66,7 @@
    );
    return res.ok({status: 200, 'success': true, data: user});
  }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.creacionMensajeNotifi = async( data )=>{
    let resultado = Object();
@@ -73,17 +75,17 @@
      tipoDe: 2,
      admin: 0,
      descripcion: data.descripcion,
-     user: data.user 
+     user: data.user
    };
    resultado = await Notificaciones.create( datas );
    return true;
  }
- 
- 
+
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  //   Codigo
  function codigo(){return (Date.now().toString(36).substr(2, 3) + Math.random().toString(36).substr(2, 2)).toUpperCase();}
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.getCabeza = async( data ) =>{
    let resultado = Object();
@@ -92,7 +94,7 @@
    if( !resultado ) return 1;
    return resultado.id;
  }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.encryptedPassword = (password) =>{
      return new Promise(resolve=>{
@@ -104,13 +106,13 @@
              },
              success: function (password) {
                resolve(password);
- 
+
              }
          });
      })
- 
+
  }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.login = async function(req, res){
      User.findOne({usu_email: req.param('usu_email')}).populate('usu_perfil').exec(function(err, user){
@@ -136,23 +138,23 @@
                  'message': 'Peticion realizada',
                  'data': user
                  });
- 
+
              },
              });
          })
  }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.cambioPass = async (req, res)=>{
- 
+
    let params = req.allParams();
    let resultado = Object();
    params.password = await Procedures.encryptedPassword(params.password);
    resultado = await User.update({id: params.id},{usu_clave: params.password}).fetch();
    return res.status(200).send( { status:200, data: resultado } );
- 
+
  }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.olvidopass = async( req, res )=>{
    let resultado = Object();
@@ -172,14 +174,14 @@
    }
    else return res.status(400).send( { status: 400, data: "Contraseña no actualizada" } );
  }
- 
+
  Procedures.nextCambioPss = async( id, passwordTR )=>{
    let resultado = Object();
    let password = await Procedures.encryptedPassword( passwordTR );
    resultado = await User.update({ id: id }, { usu_clave: password });
    return true;
  }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.querys = async (req, res)=>{
      let params = req.allParams();
@@ -196,7 +198,7 @@
      }
      return res.ok(resultado);
  }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.querysOn = async (req, res)=>{
      let params = req.allParams();
@@ -209,28 +211,28 @@
      resultado = await QuerysServices(User, params);
      return res.ok(resultado);
  }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.getRol = async( rolName )=>{
    let result = await Perfil.findOne( { prf_descripcion: rolName });
    if( !result ) 0;
    return result.id;
  }
-  
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.infoUser = async (req, res)=>{
    let params = req.allParams();
    let resultado = Object();
    let extra = Object();
    if(params.where) params = params.where;
- 
+
    resultado = await User.findOne({ id: params.id });
    if( !resultado ) return res.ok( { status:200, data: resultado } );
-   //get de puntos 
+   //get de puntos
    extra = await Puntos.findOne( { where: { usuario: resultado.id }});
    if(!extra) resultado.gananciasRefereridos = 0;
    else resultado.gananciasRefereridos = extra.valor;
- 
+
    //mis ganancias
    extra = await Tblventas.find( { where: { usu_clave_int: resultado.id, ven_estado: 1, ven_sw_eliminado: 0 } }).limit(10000000000);
    resultado.ganancias = ( _.sumBy( extra, (row)=> row.ven_ganancias ) ) + resultado.gananciasRefereridos;
@@ -250,15 +252,15 @@
    // devoluciones
    extra = await Tblventas.find( { where: { usu_clave_int: resultado.id, ven_retirado: false, ven_devolucion: false, ven_estado: 2, ven_sw_eliminado: 0 } }).limit(10000000000);
    resultado.devoluciones = ( _.sumBy( extra, (row)=> 10000 ) );
- 
+
    // Ventas En Despachada y Pendiente
    extra = await Tblventas.find( { where: { usu_clave_int: resultado.id, ven_retirado: false, ven_devolucion: false, ven_estado: [ 0, 3 ], ven_subVendedor:0, ven_sw_eliminado: 0 } }).limit(10000000000);
    resultado.ventasPendientes = ( _.sumBy( extra, (row)=> row.ven_ganancias ) );
- 
+
    // Ventas Calzado Exitoso
    extra = await Tblventas.find( { where: { usu_clave_int: resultado.id, ven_devolucion: false, ven_estado: 1, ven_subVendedor:0, ven_sw_eliminado: 0 } }).limit(10000000000);
    resultado.ventasCalzadoVR = ( _.sumBy( extra, (row)=> row.ven_total ) );
-   
+
    // Ventas Calzado Pendiente o Despachado
    extra = await Tblventas.find( { where: { usu_clave_int: resultado.id, ven_retirado: false, ven_devolucion: false, ven_estado: [ 0, 3 ], ven_subVendedor:0, ven_sw_eliminado: 0 } }).limit(10000000000);
    resultado.ventasCalzadoDR = ( _.sumBy( extra, (row)=> row.ven_total ) );
@@ -267,7 +269,7 @@
    return res.ok( { status:200, data: resultado } );
  }
 
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.resetiar = async( req, res )=>{
    let params = req.allParams();
@@ -279,13 +281,12 @@
    let codigos = codigo()
    let password = await Procedures.encryptedPassword( codigos );
    if ( !password ) return res.ok({ status: 400, data: "password Error" });
-   
+
    let msx = await MensajeService.envios( { subtitulo: "LocomproAqui.com Contraseña nueva", emails: params.usu_email, creado: "123456", descripcion: "Estimado usuario esta es la contraseña nueva para volver a entrar al admin de nuestra plataforma contraseña: " + codigos } );
- 
+
    resultado = await User.update( { id: resultado.id }, {  usu_clave: password } );
    return res.status( 200 ).send( { data: "Completado" } );
  }
- 
+
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- module.exports = Procedures; 
- 
+ module.exports = Procedures;

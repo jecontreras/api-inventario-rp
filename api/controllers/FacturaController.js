@@ -280,4 +280,104 @@
       return "ok";
  }
 
+ //****PROBLEMAS CON EL ID DE QUIEN LA CREO */
+ Procedures.statisticsBill = async( req, res )=>{
+  let params = req.allParams();
+  let result = Object();
+  let cacheMan = _.clone( await Cache.leer('facturaArticulo') );
+  if( cacheMan.length === 0 ) result = await FacturaArticulo.find(
+      {
+        where: {
+          estado: 0,
+          asentado: true,
+          //user: params.user,
+          createdAt: {
+            ">=": moment( params.fecha1 ).format(),
+            "<=": moment( params.fecha2 ).format()
+          }
+        }
+      } ).populate('factura').populate('articulo');
+  else {
+
+    result = cacheMan.filter( row => ( row.estado == 0 && row.asentado === true )
+      &&
+    ( row.createdAt >= moment( params.fecha1 ).format() &&  row.createdAt <= moment( params.fecha2 ).format() ) );
+
+    for( let row of result ){
+      if( !row.factura.id ) row.factura = ( await Cache.leer('factura') ).find( item => item.id === row.factura );
+      if( !row.articuloTalla.id )row.articuloTalla = ( await Cache.leer('articuloTalla') ).find( item => item.id === row.articuloTalla );
+    }
+  }
+
+  console.log("*****289", result.length );
+  let dataEnd = [];
+  let postion = 0;
+  for( let row of result ){
+    try {
+      let index = _.findIndex( dataEnd, ['idarticulo', row.articuloTalla.id ]);
+      // Validando Precio vendido
+      let precio = 0;
+      if( row.factura.tipoFactura == 0 ) precio = row.precioOtras * row.cantidad;
+      if( row.factura.tipoFactura == 1 ) precio = row.precioClienteDrop * row.cantidad;
+      if( row.factura.tipoFactura == 2 ) precio = row.precioShipping * row.cantidad;
+      if( row.factura.tipoFactura == 3 ) precio = row.precioLokompro * row.cantidad;
+      if( row.factura.tipoFactura == 4 ) precio = row.precioArley * row.cantidad;
+      //**************** */
+      //console.log("***326", precio,  row.articuloTalla.id)
+      if( index >=0 ) {
+        dataEnd[index].cantidad+=  row.cantidad;
+        dataEnd[index].precio+=  precio;
+      }
+      else {
+        postion++;
+        dataEnd.push( { Position: postion, idarticulo: row.articuloTalla.id, cantidad: row.cantidad, precio: ( precio * row.cantidad ), articuloTalla: row.articuloTalla } );
+      }
+    } catch (error) { console.log("****335", error)}
+  }
+  dataEnd = _.orderBy( dataEnd, ['cantidad'],['desc']);
+  return res.status(200).send( { status: 200, data: dataEnd } );
+ }
+
+ Procedures.statisticsBillPlatform = async( req, res )=>{
+  let params = req.allParams();
+  let result = Array();
+  let cacheMan = _.clone( await Cache.leer('factura') );
+  let postion = 0;
+  let dataEnd = Array();
+  if( cacheMan.length === 0 ) result = await Factura.find( {
+    where: {
+      estado: 0,
+      asentado: true,
+      user: params.user,
+      entrada: 1,
+      createdAt: {
+        ">=": moment( params.fecha1 ).format(),
+        "<=": moment( params.fecha2 ).format()
+      }
+    }
+  } );
+  else{
+      result = cacheMan.filter( row => ( row.estado == 0 && row.asentado === true && row.entrada === 1 && row.user === params.user )
+        &&
+      ( row.createdAt >= moment( params.fecha1 ).format() &&  row.createdAt <= moment( params.fecha2 ).format() ) );
+
+  }
+  console.log("***361", result.length );
+  for( let row of result ){
+    try {
+      let index = _.findIndex( dataEnd, ['nombreCliente', row.nombreCliente ]);
+      if( index >=0 ) {
+        dataEnd[index].cantidad+=  1;
+        dataEnd[index].precio+=  row.monto;
+      }
+      else {
+        postion++;
+        dataEnd.push( { nombreCliente: row.nombreCliente, Position: postion, precio: row.monto  } );
+      }
+    } catch (error) { console.log("****ERROR 381", error)}
+  }
+  dataEnd = _.orderBy( dataEnd, ['precio'],['desc']);
+  return res.status(200).send( { status: 200, data: dataEnd } );
+ }
+
  module.exports = Procedures;
