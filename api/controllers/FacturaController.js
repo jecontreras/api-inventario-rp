@@ -358,8 +358,9 @@
   let params = req.allParams();
   let result = Object();
   let resultFact = _.clone( await Cache.leer('factura') );
-  if( params.date ) resultFact = resultFact.filter( row =>  row.fecha == params.date );
-  else resultFact = resultFact.filter( row=> ( row.fecha >= moment( params.fecha1 ).format() &&  row.fecha <= moment( params.fecha2 ).format() ) );
+  //resultFact = resultFact.filter( row => row.id === '649d91854ab2a80014089cc1' );
+  if( params.date ) resultFact = resultFact.filter( row =>  row.fecha == params.date && ( row.devolucion === 0 ) );
+  else resultFact = resultFact.filter( row=> ( row.fecha >= moment( params.fecha1 ).format() &&  row.fecha <= moment( params.fecha2 ).format() && ( row.devolucion === 0 )) );
   let cacheMan = _.clone( await Cache.leer('facturaArticulo') );
   cacheMan = cacheMan.filter( row => row.estado === 0 );
   let rm = [];
@@ -418,7 +419,7 @@
   let cacheMan = _.clone( await Cache.leer('factura') );
   let postion = 0;
   let dataEnd = Array();
-  result = cacheMan.filter( row => ( row.estado == 0 && row.asentado === true && row.entrada === 1 && row.user === params.user ) );
+  result = cacheMan.filter( row => ( row.estado == 0 && row.asentado === true && row.entrada === 1 && row.user === params.user  && row.devolucion === 0 ) );
   if( params.date ) result = result.filter( row =>  row.fecha == params.date );
   else result = result.filter( row=> ( row.fecha >= moment( params.fecha1 ).format() &&  row.fecha <= moment( params.fecha2 ).format() ) );
   //console.log("***361", result.length );
@@ -437,6 +438,156 @@
   }
   dataEnd = _.orderBy( dataEnd, ['precio'],['desc']);
   return res.status(200).send( { status: 200, data: dataEnd } );
+
  }
+
+ Procedures.statisticsBillPlatformReturn = async( req, res )=>{
+  let params = req.allParams();
+  let result = Object();
+  let resultFact = _.clone( await Cache.leer('factura') );
+  //resultFact = resultFact.filter( row => row.id === '649d91854ab2a80014089cc1' );
+  if( params.date ) resultFact = resultFact.filter( row =>  row.fecha == params.date && row.devolucion === 1 );
+  else resultFact = resultFact.filter( row=> ( row.fecha >= moment( params.fecha1 ).format() &&  row.fecha <= moment( params.fecha2 ).format() && row.devolucion === 1 ) );
+  let cacheMan = _.clone( await Cache.leer('facturaArticulo') );
+  cacheMan = cacheMan.filter( row => row.estado === 0 );
+  let rm = [];
+  for( let item of resultFact ){
+    rm.push( ...cacheMan.filter( row =>{
+      if( row.factura.id ) return ( row.factura.id === item.id ) ;
+      else return row.factura === item.id
+    } ) );
+  }
+  //console.log("****368//////////", rm.length, cacheMan.length)
+  result = rm;
+
+  for( let row of result ){
+    if( !row.factura.id ) row.factura = ( await Cache.leer('factura') ).find( item => item.id === row.factura );
+    if( !row.articuloTalla.id )row.articuloTalla = ( await Cache.leer('articuloTalla') ).find( item => item.id === row.articuloTalla );
+  }
+
+  console.log("*****289", result.length, "FACTURAS",rm.length );
+  let dataEnd = [];
+  let postion = 0;
+  for( let row of result ){
+    try {
+      let index = _.findIndex( dataEnd, ['idarticulo', row.articuloTalla.id ]);
+      // Validando Precio vendido
+      let precio = 0;
+      if( row.factura.tipoFactura == 0 ) precio = row.precioOtras * row.cantidad;
+      if( row.factura.tipoFactura == 1 ) precio = row.precioClienteDrop * row.cantidad;
+      if( row.factura.tipoFactura == 2 ) precio = row.precioShipping * row.cantidad;
+      if( row.factura.tipoFactura == 3 ) precio = row.precioLokompro * row.cantidad;
+      if( row.factura.tipoFactura == 4 ) precio = row.precioArley * row.cantidad;
+      //**************** */
+      //console.log("***326", precio,  row.articuloTalla.id)
+      if( index >=0 ) {
+        dataEnd[index].cantidad+=  row.cantidad;
+        dataEnd[index].precio+=  precio;
+      }
+      else {
+        postion++;
+        dataEnd.push( {
+          Position: postion,
+          idarticulo: row.articuloTalla.id,
+          cantidad: row.cantidad,
+          precio: ( precio * row.cantidad ), articuloTalla: row.articuloTalla,
+          createdAt: row.createdAt
+        } );
+      }
+    } catch (error) { console.log("****335", error)}
+  }
+  dataEnd = _.orderBy( dataEnd, ['cantidad'],['desc']);
+  return res.status(200).send( { status: 200, data: dataEnd } );
+
+ }
+
+ Procedures.statisticsBillPlatformWarranty = async( req, res )=>{
+  let params = req.allParams();
+  let result = Object();
+  let resultFact = _.clone( await Cache.leer('factura') );
+  //resultFact = resultFact.filter( row => row.id === '649d91854ab2a80014089cc1' );
+  if( params.date ) resultFact = resultFact.filter( row =>  row.fecha == params.date && row.devolucion === 2 );
+  else resultFact = resultFact.filter( row=> ( row.fecha >= moment( params.fecha1 ).format() &&  row.fecha <= moment( params.fecha2 ).format() && row.devolucion === 1 ) );
+  let cacheMan = _.clone( await Cache.leer('facturaArticulo') );
+  cacheMan = cacheMan.filter( row => row.estado === 0 );
+  let rm = [];
+  for( let item of resultFact ){
+    rm.push( ...cacheMan.filter( row =>{
+      if( row.factura.id ) return ( row.factura.id === item.id ) ;
+      else return row.factura === item.id
+    } ) );
+  }
+  //console.log("****368//////////", rm.length, cacheMan.length)
+  result = rm;
+
+  for( let row of result ){
+    if( !row.factura.id ) row.factura = ( await Cache.leer('factura') ).find( item => item.id === row.factura );
+    if( !row.articuloTalla.id )row.articuloTalla = ( await Cache.leer('articuloTalla') ).find( item => item.id === row.articuloTalla );
+  }
+
+  console.log("*****289", result.length, "FACTURAS",rm.length );
+  let dataEnd = [];
+  let postion = 0;
+  for( let row of result ){
+    try {
+      let index = _.findIndex( dataEnd, ['idarticulo', row.articuloTalla.id ]);
+      // Validando Precio vendido
+      let precio = 0;
+      if( row.factura.tipoFactura == 0 ) precio = row.precioOtras * row.cantidad;
+      if( row.factura.tipoFactura == 1 ) precio = row.precioClienteDrop * row.cantidad;
+      if( row.factura.tipoFactura == 2 ) precio = row.precioShipping * row.cantidad;
+      if( row.factura.tipoFactura == 3 ) precio = row.precioLokompro * row.cantidad;
+      if( row.factura.tipoFactura == 4 ) precio = row.precioArley * row.cantidad;
+      //**************** */
+      //console.log("***326", precio,  row.articuloTalla.id)
+      if( index >=0 ) {
+        dataEnd[index].cantidad+=  row.cantidad;
+        dataEnd[index].precio+=  precio;
+      }
+      else {
+        postion++;
+        dataEnd.push( {
+          Position: postion,
+          idarticulo: row.articuloTalla.id,
+          cantidad: row.cantidad,
+          precio: ( precio * row.cantidad ), articuloTalla: row.articuloTalla,
+          createdAt: row.createdAt
+        } );
+      }
+    } catch (error) { console.log("****335", error)}
+  }
+  dataEnd = _.orderBy( dataEnd, ['cantidad'],['desc']);
+  return res.status(200).send( { status: 200, data: dataEnd } );
+
+ }
+
+ Procedures.articleAmounts = async( req, res )=>{
+  let params = req.allParams();
+  let list = _.clone( await Cache.leer('articulo') );
+  list = list.filter( item=> item.estado === 0 && item.user === params.user );
+  for ( let row of list ){
+    row.listTallas = ( _.clone( await Cache.leer('articuloTalla') ) ).filter( key => key.articulo === row.id );
+    row.cantidades = _.sumBy( row.listTallas, 'cantidad' );
+  }
+  list = _.orderBy( list, ['cantidades'],['desc']);
+  return res.status(200).send( { status: 200, data: list } );
+ }
+
+ Procedures.articleNextExpire = async( req, res )=>{
+  let params = req.allParams();
+  let listArticle = _.clone( await Cache.leer('articuloTalla') );
+  listArticle = listArticle.filter( item=> item.estado === 0 )
+  listArticle = _.orderBy( listArticle, ['cantidad'],['desc']);
+  return res.status(200).send( { status: 200, data: listArticle } );
+ }
+
+ Procedures.articleNextFurther = async( req, res )=>{
+  let params = req.allParams();
+  let listArticle = _.clone( await Cache.leer('articuloTalla') );
+  listArticle = listArticle.filter( item=> item.estado === 0 )
+  listArticle = _.orderBy( listArticle, ['cantidad'],['asc']);
+  return res.status(200).send( { status: 200, data: listArticle } );
+ }
+
 
  module.exports = Procedures;
