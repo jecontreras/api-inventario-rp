@@ -89,7 +89,7 @@
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  Procedures.getCabeza = async( data ) =>{
    let resultado = Object();
-   resultado = await Empresa.find({ id: data.empresa || "bodega1" });
+   resultado = await Empresa.find({ id: data.empresa || "63dd2a3eadee2e0014af50f4" });
    resultado = resultado[0];
    if( !resultado ) return 1;
    return resultado.id;
