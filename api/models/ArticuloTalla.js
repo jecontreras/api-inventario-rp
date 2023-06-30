@@ -42,6 +42,21 @@ module.exports = {
     //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
 
   },
+  beforeCreate:(valuesToSet, proceed)=>{
+    console.log("¨¨ËNTRE create")
+    Cache.loadDBS('articuloTalla');
+    return proceed();
+  },
+  beforeUpdate:(valuesToSet, proceed)=>{
+    console.log("¨¨UPDATE")
+    Cache.loadDBS('articuloTalla');
+    return proceed();
+  },
+  beforeDestroy:(valuesToSet, proceed)=>{
+    console.log("¨¨UPDATE")
+    Cache.loadDBS('articuloTalla');
+    return proceed();
+  }
 
 };
 

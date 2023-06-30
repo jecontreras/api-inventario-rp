@@ -98,6 +98,21 @@ module.exports = {
     //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
 
   },
+  beforeCreate:(valuesToSet, proceed)=>{
+    console.log("¨¨ËNTRE create")
+    Cache.loadDBS('factura');
+    return proceed();
+  },
+  beforeUpdate:(valuesToSet, proceed)=>{
+    console.log("¨¨UPDATE")
+    Cache.loadDBS('factura');
+    return proceed();
+  },
+  beforeDestroy:(valuesToSet, proceed)=>{
+    console.log("¨¨UPDATE")
+    Cache.loadDBS('factura');
+    return proceed();
+  }
 
 };
 

@@ -77,6 +77,21 @@ module.exports = {
     //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
 
   },
+  beforeCreate:(valuesToSet, proceed)=>{
+    console.log("¨¨ËNTRE create")
+    Cache.loadDBS('facturaArticulo');
+    return proceed();
+  },
+  beforeUpdate:(valuesToSet, proceed)=>{
+    console.log("¨¨UPDATE")
+    Cache.loadDBS('facturaArticulo');
+    return proceed();
+  },
+  beforeDestroy:(valuesToSet, proceed)=>{
+    console.log("¨¨UPDATE")
+    Cache.loadDBS('facturaArticulo');
+    return proceed();
+  }
 
 };
 

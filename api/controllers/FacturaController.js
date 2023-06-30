@@ -419,7 +419,7 @@
   let cacheMan = _.clone( await Cache.leer('factura') );
   let postion = 0;
   let dataEnd = Array();
-  result = cacheMan.filter( row => ( row.estado == 0 && row.asentado === true && row.entrada === 1 && row.user === params.user  && row.devolucion === 0 ) );
+  result = cacheMan.filter( row => ( row.estado == 0 && row.asentado === true && row.entrada === 1  && row.devolucion === 0 ) );
   if( params.date ) result = result.filter( row =>  row.fecha == params.date );
   else result = result.filter( row=> ( row.fecha >= moment( params.fecha1 ).format() &&  row.fecha <= moment( params.fecha2 ).format() ) );
   //console.log("***361", result.length );
@@ -564,7 +564,7 @@
  Procedures.articleAmounts = async( req, res )=>{
   let params = req.allParams();
   let list = _.clone( await Cache.leer('articulo') );
-  list = list.filter( item=> item.estado === 0 && item.user === params.user );
+  list = list.filter( item=> item.estado === 0 );
   for ( let row of list ){
     row.listTallas = ( _.clone( await Cache.leer('articuloTalla') ) ).filter( key => key.articulo === row.id );
     row.cantidades = _.sumBy( row.listTallas, 'cantidad' );

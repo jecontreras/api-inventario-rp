@@ -77,6 +77,21 @@ module.exports = {
     //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
 
   },
+  beforeCreate:(valuesToSet, proceed)=>{
+    console.log("¨¨ËNTRE create")
+    Cache.loadDBS('articulo');
+    return proceed();
+  },
+  beforeUpdate:(valuesToSet, proceed)=>{
+    console.log("¨¨UPDATE")
+    Cache.loadDBS('articulo');
+    return proceed();
+  },
+  beforeDestroy:(valuesToSet, proceed)=>{
+    console.log("¨¨UPDATE")
+    Cache.loadDBS('articulo');
+    return proceed();
+  }
 
 };
 
