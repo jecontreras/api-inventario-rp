@@ -569,7 +569,7 @@
     row.listTallas = ( _.clone( await Cache.leer('articuloTalla') ) ).filter( key => key.articulo === row.id );
     row.cantidades = _.sumBy( row.listTallas, 'cantidad' );
   }
-  list = _.orderBy( list, ['cantidades'],['desc']);
+  list = _.orderBy( list, ['cantidades'],['asc']);
   return res.status(200).send( { status: 200, data: list } );
  }
 
