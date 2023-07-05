@@ -7,34 +7,45 @@ let Storage = {
   factura: Array(),
   articulo: Array(),
   articuloTalla: Array(),
+  articuloColor: Array(),
   logs: Array()
 };
 Procedures.loadDBS = async(model)=>{
   if( model === 'facturaArticulo') {
-    Storage.facturaArticulo = await FacturaArticulo.find({ where: { estado: 0 }, sort: "createdAt DESC" }).limit(100000000);
+    Storage.facturaArticulo = await FacturaArticulo.find({ where: { estado: 0 } }).limit(100000000);
     console.log("***CONTANDO REAL DBS FACTURA ARTICULO", await FacturaArticulo.count() );
     console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>CARGADO FACTURA ARTICULO AL CACHE", Storage.facturaArticulo.length )
   }
   if( model === 'factura') {
-    Storage.factura = await Factura.find({ where: { }, sort: "createdAt DESC" }).limit(100000000);
+    Storage.factura = await Factura.find({ where: { } }).limit(100000000);
     console.log("***CONTANDO REAL DBS FACTURA", await Factura.count() );
     console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>CARGADO FACTURA AL CACHE", Storage.factura.length )
   }
   if( model === 'articulo') {
-    Storage.articulo = await Articulos.find({ where: { estado: 0 }, sort: "createdAt DESC" }).limit(100000000);
+    Storage.articulo = await Articulos.find({ where: { estado: 0 } }).limit(100000000);
     console.log("***CONTANDO REAL DBS ARTICULOS", await Articulos.count() );
     console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>CARGADO ARTICULO AL CACHE", Storage.articulo.length )
   }
   if( model === 'articuloTalla') {
-    Storage.articuloTalla = await ArticuloTalla.find({ where: { estado: 0 }, sort: "createdAt DESC" }).limit(100000000);
+    Storage.articuloTalla = await ArticuloTalla.find({ where: { estado: 0 } }).limit(100000000);
     console.log("***CONTANDO REAL DBS ARTICULO TALLA", await ArticuloTalla.count() );
     console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>CARGADO ARTICULO Talla AL CACHE", Storage.articuloTalla.length )
+  }
+  if( model === 'articuloColor') {
+    Storage.articuloColor = await ArticuloColor.find({ where: { estado: 0 } }).limit(100000000);
+    console.log("***CONTANDO REAL DBS ARTICULO COLOR", await ArticuloColor.count() );
+    console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>CARGADO ARTICULO COLOR AL CACHE", Storage.articuloColor.length );
   }
 }
 
 Procedures.leer = async( opt )=>{
     //console.log("***QUE LLEGO", opt, Storage.facturaArticulo.length )
-    return _.clone( Storage[opt] );
+    let vrmNex = _.clone( Storage[opt] );
+    let dtFinix = Array();
+    for( let item of vrmNex ){
+      dtFinix.push( item );
+    }
+    return dtFinix;
 }
 
 Procedures.read = async( id, opt )=>{

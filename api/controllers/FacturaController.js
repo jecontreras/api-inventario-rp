@@ -23,19 +23,43 @@
      let params = req.allParams();
      let resultado = Object();
      resultado = await QuerysServices(Factura, params);
+     const cacheManFA = Array();
+     cacheManFA.push( ...( _.clone( await Cache.leer('facturaArticulo') )) );
+     const cacheManA = Array(); 
+     cacheManA.push( ...( _.clone( await Cache.leer('articulo') ) ) );
+     const cacheManAC = Array();
+     cacheManAC.push( ...(_.clone( await Cache.leer('articuloColor') ) ) );
+     const cacheManAT = Array();
+     cacheManAT.push( ...( _.clone( await Cache.leer('articuloTalla') ) ) );
+     console.log("****27 Factura Articulo", cacheManFA.length)
+     console.log("****27 Articulo", cacheManA.length)
+     console.log("****27 Articulo Color", cacheManAC.length)
+     console.log("****27 Articulo Talla", cacheManAT.length)
      for(let row of resultado.data ){
+        row.listFacturaArticulo = [];
         if( row.provedor ) row.provedor = await Provedor.findOne( { where: { id: row.provedor } } );
-        row.listFacturaArticulo = await FacturaArticulo.find( { where: { factura: row.id, estado: 0 } });
+        if( cacheManFA.length === 0 )row.listFacturaArticulo = await FacturaArticulo.find( { where: { factura: row.id, estado: 0 } });
+        else row.listFacturaArticulo = _.clone( cacheManFA.filter( off => ( off.factura === row.id ) && ( off.estado === 0 ) ) ); 
         for( let item of  row.listFacturaArticulo ){
-            item.articulo = await Articulos.findOne( { id: item.articulo } );
+          if( !item.articulo.id ){
+            if( cacheManA.length === 0 ) item.articulo = await Articulos.findOne( { id: item.articulo } );
+            else item.articulo = cacheManA.find( off=> off.id === ( item.articulo.id || item.articulo ) );
             if( item.articulo ) {
                 item.articulo.listColor = await ArticuloColor.find( { where: { articulo: item.articulo.id } } ).limit(100);
                 for( let key of item.articulo.listColor ){
-                    key.listTalla = await ArticuloTalla.find( { where: { articulo: item.articulo.id, listColor: key.id} } ).limit(100);
+                  if( cacheManAC.length === 0 ) key.listTalla = await ArticuloTalla.find( { where: { articulo: item.articulo.id, listColor: key.id} } ).limit(100);
+                  else key.listTalla = cacheManAC.find( off => ( off.articulo === item.articulo.id ) && ( off.listColor === key.id ) );
                 }
             }
-            item.articuloTalla = await ArticuloTalla.findOne( { id: item.articuloTalla } );
-            item.articuloColor = await ArticuloColor.findOne( { id: item.articuloColor } );
+          }
+          if( !item.articuloTalla.id ){
+            if( cacheManAT.length === 0 ) item.articuloTalla = await ArticuloTalla.findOne( { id: item.articuloTalla } );
+            else item.articuloTalla = cacheManAT.find( off => off.id === item.articuloTalla );
+          }
+          if( !item.articuloColor.id ){
+            if( cacheManAC.length === 0 ) item.articuloColor = await ArticuloColor.findOne( { id: item.articuloColor } );
+            else item.articuloColor = cacheManAC.find( off => off.id === item.articuloColor );
+          }
         }
      }
      return res.ok(resultado);

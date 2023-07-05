@@ -43,6 +43,7 @@ module.exports.tarea = async function() {
         await Cache.loadDBS('factura');
         await Cache.loadDBS('facturaArticulo');
         await Cache.loadDBS('articuloTalla');
+        await Cache.loadDBS('articuloColor');
         await Cache.loadDBS('articulo');
     }
     iniciador();
