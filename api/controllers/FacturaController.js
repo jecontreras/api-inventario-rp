@@ -38,8 +38,9 @@
      for(let row of resultado.data ){
         row.listFacturaArticulo = [];
         if( row.provedor ) row.provedor = await Provedor.findOne( { where: { id: row.provedor } } );
-        if( cacheManFA.length === 0 )row.listFacturaArticulo = await FacturaArticulo.find( { where: { factura: row.id, estado: 0 } });
+        if( cacheManFA.length === 0 ) row.listFacturaArticulo = await FacturaArticulo.find( { where: { factura: row.id, estado: 0 } });
         else row.listFacturaArticulo = _.clone( cacheManFA.filter( off => ( off.factura === row.id ) && ( off.estado === 0 ) ) ); 
+        if( row.listFacturaArticulo.length === 0 ) row.listFacturaArticulo = await FacturaArticulo.find( { where: { factura: row.id, estado: 0 } });
         for( let item of  row.listFacturaArticulo ){
           if( !item.articulo.id ){
             if( cacheManA.length === 0 ) item.articulo = await Articulos.findOne( { id: item.articulo } );
@@ -179,6 +180,7 @@
             }
         }
     }
+    Cache.loadDBS('facturaArticulo');
     return res.status(200).send( { status:200, data: parametros } );
  }
 
@@ -238,6 +240,7 @@
     }
     await Factura.update( { id: resultado.id }, { asentado: true, fechaasentado: new moment().format("DD/MM/YYYY, h:mm:ss a") } );
     await LogsServices.createLog( { txt: `Factura asentada ${ resultado.codigo } Fecha ${ new Date() }`} );
+    Cache.loadDBS('facturaArticulo');
     return res.status( 200 ).send( { status: 200, data: "Exitoso asentada" } );
  }
 

@@ -4,7 +4,7 @@
  * @description :: A model definition represents a database table/collection.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
  */
-
+let flagship = false;
 module.exports = {
 
   attributes: {
@@ -77,19 +77,31 @@ module.exports = {
     //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
 
   },
-  beforeCreate:(valuesToSet, proceed)=>{
+  beforeCreate: async (valuesToSet, proceed)=>{
     console.log("¨¨ËNTRE create")
-    Cache.loadDBS('articulo');
+    if( flagship === false ){
+      flagship = true;
+      await Cache.loadDBS('articulo');
+      flagship = false;
+    }
     return proceed();
   },
-  beforeUpdate:(valuesToSet, proceed)=>{
+  beforeUpdate: async (valuesToSet, proceed)=>{
     console.log("¨¨UPDATE")
-    Cache.loadDBS('articulo');
+    if( flagship === false ){
+      flagship = true;
+      await Cache.loadDBS('articulo');
+      flagship = false;
+    }
     return proceed();
   },
-  beforeDestroy:(valuesToSet, proceed)=>{
+  beforeDestroy: async (valuesToSet, proceed)=>{
     console.log("¨¨UPDATE")
-    Cache.loadDBS('articulo');
+    if( flagship === false ){
+      flagship = true;
+      await Cache.loadDBS('articulo');
+      flagship = false;
+    }
     return proceed();
   }
 
