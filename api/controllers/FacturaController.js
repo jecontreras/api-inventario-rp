@@ -99,6 +99,7 @@
 
  Procedures.validateClient = async( data )=>{
   let resultado = Object();
+  if( !data.nombreCliente ) data.nombreCliente = "Factura";
   resultado = await Clientes.findOne( { nombre: data.nombreCliente } );
   if( resultado ) return resultado;
   else return await Clientes.create( { nombre: data.nombreCliente } );
